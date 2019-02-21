@@ -1,0 +1,15 @@
+.mainPage {
+    margin-top: 200px;
+}
+
+.mainPage__title {
+    font-size: 65px;
+}
+
+.mainPage__subtitle {
+    font-size: 21px;
+}
+
+.mainPage__form {
+    margin: auto;
+}
