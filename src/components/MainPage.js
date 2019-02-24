@@ -1,5 +1,6 @@
 import React, {Component, Fragment} from 'react'
 import "../css/index.css"
+import {Link} from 'react-router-dom'
 
 export class MainPage extends Component {
     render() {
@@ -13,7 +14,7 @@ export class MainPage extends Component {
                             <div className="form-group">
                                 <input type="password" className="form-control" placeholder="Пароль"/>
                             </div>
-                            <button type="submit" className="btn btn-outline-primary">Submit</button>
+                            <Link to='/groups'><button type="submit" className="btn btn-outline-primary">Войти</button></Link>
                         </form>
                     </div>
                 </div>
