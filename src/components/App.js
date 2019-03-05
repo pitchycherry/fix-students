@@ -10,4 +10,5 @@ const App = ({children}) => {
         </Fragment>
     )
 };
+
 export default App;
