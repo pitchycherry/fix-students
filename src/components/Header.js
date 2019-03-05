@@ -5,15 +5,15 @@ export const Header = () => {
     return (
         <Fragment>
             <nav className="navbar navbar-expand-lg navbar-light bg-light main-header">
-                <NavLink exact to='/'><a className="navbar-brand">FixStudents</a></NavLink>
+                <NavLink exact to='/' className="navbar-brand text-primary">FixStudents</NavLink>
                 <div className="navbar-nav">
-                    <NavLink to='/groups'><a className="nav-item nav-link">Группы</a></NavLink>
-                    <NavLink to='/disciplines'><a className="nav-item nav-link">Дисциплины</a></NavLink>
-                    <NavLink to='/teachers'><a className="nav-item nav-link">Преподаватели</a></NavLink>
-                    <NavLink to='/students'><a className="nav-item nav-link">Студенты</a></NavLink>
+                    <NavLink to='/groups' className="nav-item nav-link">Группы</NavLink>
+                    <NavLink to='/disciplines' className="nav-item nav-link">Дисциплины</NavLink>
+                    <NavLink to='/teachers' className="nav-item nav-link">Преподаватели</NavLink>
+                    <NavLink to='/students' className="nav-item nav-link">Студенты</NavLink>
                 </div>
             </nav>
         </Fragment>
     )
-}
+};
 

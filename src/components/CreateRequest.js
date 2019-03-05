@@ -1,6 +1,3 @@
-import React from 'react'
-import {BASE_PATH, ALL_PETITION_PATH} from "./App"
-
 export const CreateRequest = (options, body) => {
     return fetch(options.path, {
         headers: {

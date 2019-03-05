@@ -1,6 +1,5 @@
 import React, {Component, Fragment} from 'react'
 import "../css/index.css"
-import {Link} from 'react-router-dom'
 import {BASE_PATH, LOGIN_PATH} from "./App";
 import {CreateRequest} from "./CreateRequest";
 
@@ -8,13 +7,13 @@ export class MainPage extends Component {
     state = {
         name: '',
         password: '',
-    }
+    };
     handleChangeName = event => {
         this.setState({name: event.target.value});
-    }
+    };
     handleChangePassword = event => {
         this.setState({password: event.target.value});
-    }
+    };
     handleSubmit = event => {
         event.preventDefault();
         const userData = new FormData();
