@@ -12,6 +12,7 @@ export const Header = () => {
                     <NavLink to='/teachers' className="nav-item nav-link">Преподаватели</NavLink>
                     <NavLink to='/students' className="nav-item nav-link">Студенты</NavLink>
                 </div>
+                <a className="col text-right nav-item nav-link">Администратор: {localStorage.getItem('login')}</a>
             </nav>
         </Fragment>
     )

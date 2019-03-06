@@ -2,6 +2,8 @@ import React, {Component, Fragment} from 'react'
 import "../css/index.css"
 import {BASE_PATH, LOGIN_PATH} from "./App";
 import {CreateRequest} from "./CreateRequest";
+import {store} from "../index";
+import {getAdminInfo} from "../store/actions/actions";
 
 export class MainPage extends Component {
     state = {
@@ -25,8 +27,9 @@ export class MainPage extends Component {
             method: "POST"
         }, userData).then(response => {
             localStorage.setItem('token', response.token);
-            localStorage.setItem('id', response.id);
+            localStorage.setItem('login', response.data.user.login);
             console.log("Пользователь аутентифицирован", response);
+            store.dispatch(getAdminInfo());
             // переход на страницу групп
             this.props.history.push('/groups');
         })
