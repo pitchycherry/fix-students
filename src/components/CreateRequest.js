@@ -1,10 +1,9 @@
 export const CreateRequest = (options, body) => {
     return fetch(options.path, {
-        headers: {
-            //"api-token": "WK8fG9V4TQzdHnsoZB5PUfsp"
-            //"Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-        },
-        method: "POST",
+        headers: options.headers,
+        //"api-token": localStorage.getItem('token')
+        //"Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+        method: options.method,
         body: body
     }).then(response => {
         if (response.status === 200) {

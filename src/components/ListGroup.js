@@ -1,7 +1,32 @@
 import React, {Component, Fragment} from "react";
 import 'font-awesome/css/font-awesome.min.css';
+import {CreateRequest} from "./CreateRequest";
+import {BASE_PATH, GROUP_PATH} from "./App";
+import {store} from "../index";
+import {getListGroup} from "../store/actions/actions";
 
 export class ListGroup extends Component {
+    componentDidMount() {
+        CreateRequest({
+            headers: {
+                "api-token": localStorage.getItem('token'),
+                "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
+            },
+            path: `${BASE_PATH}${GROUP_PATH}`,
+            method: "GET"
+        }).then(response => {
+            console.log("Список групп получен", response);
+            let res = response.data.map(group => {
+                return group.name;
+            });
+            store.dispatch(getListGroup(res));
+            console.log(store.getState().list_group)
+        })
+            .catch(() => {
+                console.log("Список групп не получен");
+            });
+    }
+
     render() {
         return (
             <Fragment>
@@ -34,23 +59,8 @@ export class ListGroup extends Component {
                                  data-parent="#accordionExample">
                                 <div className="card-body">
                                     <ul className="list-group list-group-flush">
-                                        <li className="list-group-item">
-                                            <div className="row">
-                                                <div className="col text-left name-group">
-                                                    АВТ-810
-                                                </div>
-                                                <div className="col text-right">
-                                                    <button type="button" className="btn" data-toggle="modal"
-                                                            data-target="#editGroupModal">
-                                                        <i className="fas fa-pencil-alt"></i>
-                                                    </button>
-                                                    <button type="button" className="btn" data-toggle="modal"
-                                                            data-target="#deleteGroupModal">
-                                                        <i className="fas fa-trash-alt"></i>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </li>
+                                        {store.getState().list_group}
+
                                         <li className="list-group-item">
                                             <div className="row">
                                                 <div className="col text-left name-group">

@@ -9,9 +9,10 @@ import {MainPage} from "./components/MainPage";
 import {PageGroup} from "./components/PageGroup";
 import {PageTeacher} from "./components/PageTeacher";
 import reducer from './store/reducers/reducer';
+import {getListGroup} from "./store/actions/actions";
 
 export const store = createStore(reducer);
-
+store.dispatch(getListGroup("group"));
 // сделали render функцией
 const render = function () {
     ReactDOM.render((
