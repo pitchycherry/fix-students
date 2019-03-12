@@ -9,14 +9,14 @@ export class ListDiscipline extends Component {
     loadList = () =>{
         fetch('http://nstu-tracker.thematrix.su/discipline',{
             method: "GET",
-            headers:{"api-token": "JqHNSZ7YjoAFVqg43hPfDnvA"}
+            headers:{"api-token": "xpV3MjwKkWYPY2bhchWL40eu"}
         }).then(function (response) {
             return response.json()
         }).then(data =>{
             this.setState({isLoading:false, arr: data.data});
         }).catch(function(error) {
-            console.log('POST failed', error.message)
-        })
+            console.log('GET findAll failed', error.message)
+        });
     };
     componentDidMount() {
         this.setState({isLoading:true});
@@ -33,13 +33,10 @@ export class ListDiscipline extends Component {
                             <div className="col text-left name-group">{item.name}</div>
                             <div className="col text-right">
                                 <button type="button" className="btn" data-toggle="modal"
-                                        data-target="#editDisciplineModal">
+                                        data-target="#editDisciplineModal" id={item.id +'e'}>
                                     <i className="fas fa-pencil-alt"></i>
                                 </button>
-                                <button type="button" className="btn" data-toggle="modal"
-                                        data-target="#deleteDisciplineModal">
-                                    <i className="fas fa-trash-alt"></i>
-                                </button>
+                                <DelButton item = {item}/>
                             </div>
                         </div>
                     </li>
@@ -80,6 +77,21 @@ export class ListDiscipline extends Component {
                     </div>
                 </div>
             </Fragment>
+        )
+    }
+}
+
+class DelButton extends Component{
+    delItem = () => {
+        document.cookie = "DelItemId="+this.props.item.id;
+        document.cookie = "DelItemName="+this.props.item.name;
+    };
+    render(){
+        return(
+            <button onClick={this.delItem} type="button" className="btn" data-toggle="modal"
+                    data-target="#deleteDisciplineModal" id={this.props.item.id +'d'} >
+                <i className="fas fa-trash-alt"></i>
+            </button>
         )
     }
 }
