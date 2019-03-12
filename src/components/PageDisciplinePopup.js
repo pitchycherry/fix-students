@@ -31,20 +31,6 @@ export const PageDisciplinePopup = () => {
                 </div>
             </div>
             {/*Попап для удаления дисциплины*/}
-            {/*<div className="modal fade" id="deleteDisciplineModal" tabIndex="-1" role="dialog"*/}
-                 {/*aria-labelledby="deleteDisciplineModal" aria-hidden="true">*/}
-                {/*<div className="modal-dialog" role="document">*/}
-                    {/*<div className="modal-content">*/}
-                        {/*<div className="modal-body">*/}
-                            {/*<p>Вы уверены, что хотите удалить дисицплину?</p>*/}
-                        {/*</div>*/}
-                        {/*<div className="modal-footer">*/}
-                            {/*<button type="button" className="btn btn-primary" onClick={DelDiscipline}>Удалить</button>*/}
-                            {/*<button type="button" className="btn btn-outline-secondary" data-dismiss="modal">Отмена</button>*/}
-                        {/*</div>*/}
-                    {/*</div>*/}
-                {/*</div>*/}
-            {/*</div>*/}
             <div className="modal fade" id="deleteDisciplineModal" tabIndex="-1" role="dialog"
                  aria-labelledby="deleteDisciplineModalLabel" aria-hidden="true">
                 <div className="modal-dialog" role="document">
@@ -78,14 +64,14 @@ export const PageDisciplinePopup = () => {
                             </div>
                             <div className="modal-body">
                                 <div className="form-group">
-                                    <label htmlFor="editDisciplineName">Название дисциплины</label>
-                                    <input className="form-control" type="text" name="value" id="editDisciplineName"
-                                           placeholder="Введите название дисциплины"/>
+                                    <label htmlFor="editDisciplineName">Изменение дисциплины</label>
+                                    <input className="form-control" type="text" name="value" id="editDisciplineNameLabel"
+                                           placeholder="Введите новое название дисциплины"/>
                                 </div>
                             </div>
                             <div className="modal-footer">
-                                <button type="submit" className="btn btn-outline-primary">Добавить</button>
-                                <button type="button" className="btn btn-outline-secondary" data-dismiss="modal">Отмена</button>
+                                <button type="submit" className="btn btn-outline-primary" >Применить</button>
+                                <button type="button" className="btn btn-outline-secondary" data-dismiss="modal" onClick={EditDiscipline}>Отмена</button>
                             </div>
                         </form>
                     </div>
@@ -111,9 +97,9 @@ function AddDiscipline() {
 }
 function DelDiscipline() {
     // eslint-disable-next-line
-    var DelItemId = document.cookie.replace(/(?:(?:^|.*;\s*)DelItemId\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+    let DelItemId = document.cookie.replace(/(?:(?:^|.*;\s*)DelItemId\s*\=\s*([^;]*).*$)|^.*$/, "$1");
     // eslint-disable-next-line
-    var DelItemName = document.cookie.replace(/(?:(?:^|.*;\s*)DelItemName\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+    let DelItemName = document.cookie.replace(/(?:(?:^|.*;\s*)DelItemName\s*\=\s*([^;]*).*$)|^.*$/, "$1");
     const delDiscipline = new FormData();
     delDiscipline.append('name', DelItemName);
     fetch('http://nstu-tracker.thematrix.su/discipline/'+DelItemId,{
@@ -129,4 +115,26 @@ function DelDiscipline() {
     });
     document.cookie = 'DelItemId=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
     document.cookie = 'DelItemName=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+}
+function EditDiscipline() {
+    // eslint-disable-next-line
+    let EditItemId = document.cookie.replace(/(?:(?:^|.*;\s*)EditItemId\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+    const EditDiscipline = new FormData();
+    EditDiscipline.append('name', document.getElementById("editDisciplineNameLabel").value);
+    alert(document.getElementById("editDisciplineNameLabel").value);
+    fetch('http://nstu-tracker.thematrix.su/discipline/'+EditItemId,{
+        method: "PUT",
+        headers:{
+            "api-token": "do2BrBs5ZfsMjzvCKDtyMbm4",
+        },
+        body:EditDiscipline
+    }).then(function (response) {
+        return response;
+    }).then(data =>{
+        console.log(data)
+    }).catch(function(error) {
+        console.log('EDIT failed', error);
+        alert()
+    });
+    document.cookie = 'EditItemId=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 }

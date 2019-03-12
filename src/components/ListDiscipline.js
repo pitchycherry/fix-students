@@ -26,29 +26,28 @@ export class ListDiscipline extends Component {
         const {arr, isLoading} = this.state;
         let DisciplineList;
         if (!!arr) {
-            DisciplineList = arr.map(function (item) {
-                return (
-                    <li className="list-group-item" key={item.id}>
-                        <div className="row">
-                            <div className="col text-left name-group">{item.name}</div>
-                            <div className="col text-right">
-                                <button type="button" className="btn" data-toggle="modal"
-                                        data-target="#editDisciplineModal" id={item.id +'e'}>
-                                    <i className="fas fa-pencil-alt"></i>
-                                </button>
-                                <DelButton item = {item}/>
+            if (arr.length){
+                DisciplineList = arr.map(function (item) {
+                    return (
+                        <li className="list-group-item" key={item.id}>
+                            <div className="row">
+                                <div className="col text-left name-group">{item.name}</div>
+                                <div className="col text-right">
+                                    <EditButton item = {item}/>
+                                    <DelButton item = {item}/>
+                                </div>
                             </div>
+                        </li>
+                    )
+                })
+            } else{
+                DisciplineList =
+                    <li className="list-group-item" key="-1">
+                        <div className="row">
+                            <div className="col text-center name-group">Записей нет!</div>
                         </div>
                     </li>
-                )
-            })
-        }else{
-            DisciplineList =
-            <li className="list-group-item" key="-1">
-                <div className="row">
-                    <div className="col text-center name-group">Записей нет!</div>
-                </div>
-            </li>
+            }
         }
         return (
             <Fragment>
@@ -80,7 +79,6 @@ export class ListDiscipline extends Component {
         )
     }
 }
-
 class DelButton extends Component{
     delItem = () => {
         document.cookie = "DelItemId="+this.props.item.id;
@@ -91,6 +89,19 @@ class DelButton extends Component{
             <button onClick={this.delItem} type="button" className="btn" data-toggle="modal"
                     data-target="#deleteDisciplineModal" id={this.props.item.id +'d'} >
                 <i className="fas fa-trash-alt"></i>
+            </button>
+        )
+    }
+}
+class EditButton extends Component{
+    EditItem = () => {
+        document.cookie = "EditItemId="+this.props.item.id;
+    };
+    render(){
+        return(
+            <button onClick={this.EditItem} type="button" className="btn" data-toggle="modal"
+                    data-target="#editDisciplineModal" id={this.props.item.id +'e'}>
+                <i className="fas fa-pencil-alt"></i>
             </button>
         )
     }
