@@ -1,5 +1,5 @@
 import React, {Fragment} from 'react';
-
+//БРАТЬ ТОКЕН ИЗ store
 export const PageDisciplinePopup = () => {
     return (
         <Fragment>
@@ -70,8 +70,8 @@ export const PageDisciplinePopup = () => {
                                 </div>
                             </div>
                             <div className="modal-footer">
-                                <button type="submit" className="btn btn-outline-primary" >Применить</button>
-                                <button type="button" className="btn btn-outline-secondary" data-dismiss="modal" onClick={EditDiscipline}>Отмена</button>
+                                <button type="submit" className="btn btn-outline-primary" onClick={EditDiscipline}>Применить</button>
+                                <button type="button" className="btn btn-outline-secondary" data-dismiss="modal" >Отмена</button>
                             </div>
                         </form>
                     </div>
@@ -119,22 +119,17 @@ function DelDiscipline() {
 function EditDiscipline() {
     // eslint-disable-next-line
     let EditItemId = document.cookie.replace(/(?:(?:^|.*;\s*)EditItemId\s*\=\s*([^;]*).*$)|^.*$/, "$1");
-    const EditDiscipline = new FormData();
-    EditDiscipline.append('name', document.getElementById("editDisciplineNameLabel").value);
-    alert(document.getElementById("editDisciplineNameLabel").value);
     fetch('http://nstu-tracker.thematrix.su/discipline/'+EditItemId,{
         method: "PUT",
         headers:{
             "api-token": "do2BrBs5ZfsMjzvCKDtyMbm4",
         },
-        body:EditDiscipline
+        // body:new URLSearchParams({name: document.getElementById("editDisciplineNameLabel").value})
+        body: new URLSearchParams({name: document.getElementById("editDisciplineNameLabel").value})
     }).then(function (response) {
         return response;
-    }).then(data =>{
-        console.log(data)
     }).catch(function(error) {
         console.log('EDIT failed', error);
-        alert()
     });
     document.cookie = 'EditItemId=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 }
