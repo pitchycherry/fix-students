@@ -86,7 +86,7 @@ function AddDiscipline() {
     fetch('http://nstu-tracker.thematrix.su/discipline',{
         method: "POST",
         headers:{
-            "api-token": "xpV3MjwKkWYPY2bhchWL40eu",
+            "api-token": localStorage.getItem('token'),
         },
         body:newDiscipline
     }).then(function (response) {
@@ -105,7 +105,7 @@ function DelDiscipline() {
     fetch('http://nstu-tracker.thematrix.su/discipline/'+DelItemId,{
         method: "DELETE",
         headers:{
-            "api-token": "do2BrBs5ZfsMjzvCKDtyMbm4",
+            "api-token": localStorage.getItem('token'),
         },
         body:delDiscipline
     }).then(function (response) {
@@ -122,7 +122,7 @@ function EditDiscipline() {
     fetch('http://nstu-tracker.thematrix.su/discipline/'+EditItemId,{
         method: "PUT",
         headers:{
-            "api-token": "do2BrBs5ZfsMjzvCKDtyMbm4",
+            "api-token": localStorage.getItem('token'),
         },
         // body:new URLSearchParams({name: document.getElementById("editDisciplineNameLabel").value})
         body: new URLSearchParams({name: document.getElementById("editDisciplineNameLabel").value})
