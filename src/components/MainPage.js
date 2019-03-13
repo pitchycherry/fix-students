@@ -2,30 +2,28 @@ import React, {Component, Fragment} from 'react'
 import "../css/index.css"
 import {BASE_PATH, LOGIN_PATH} from "./App";
 import {CreateRequest} from "./CreateRequest";
+import {store} from "../index";
+import {setLogin, setPassword, setUserInfo} from "../store/actions/actions";
 
 export class MainPage extends Component {
-    state = {
-        name: '',
-        password: '',
-    };
-    handleChangeName = event => {
-        this.setState({name: event.target.value});
+    handleChangeLogin = event => {
+        store.dispatch(setLogin(event.target.value));
     };
     handleChangePassword = event => {
-        this.setState({password: event.target.value});
+        store.dispatch(setPassword(event.target.value));
     };
     handleSubmit = event => {
         event.preventDefault();
         const userData = new FormData();
-        userData.append('login', this.state.name);
-        userData.append('password', this.state.password);
+        userData.append('login', store.getState().login);
+        userData.append('password', store.getState().password);
 
         CreateRequest({
             path: `${BASE_PATH}${LOGIN_PATH}`,
             method: "POST"
         }, userData).then(response => {
-            localStorage.setItem('token', response.token);
-            localStorage.setItem('id', response.id);
+            localStorage.setItem('token', response.data.token);
+            localStorage.setItem('login', response.data.user.login);
             console.log("Пользователь аутентифицирован", response);
             // переход на страницу групп
             this.props.history.push('/groups');
@@ -46,7 +44,7 @@ export class MainPage extends Component {
                             <div className="form-group">
                                 <label htmlFor="login" className="mt-3">Логин</label>
                                 <input type="text" id="login" className="form-control" placeholder="Логин"
-                                       onChange={this.handleChangeName}/>
+                                       onChange={this.handleChangeLogin}/>
                                 <label htmlFor="password" className="mt-3">Пароль</label>
                                 <input type="password" id="password" className="form-control" placeholder="Пароль"
                                        onChange={this.handleChangePassword}/>
