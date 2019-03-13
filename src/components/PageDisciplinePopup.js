@@ -96,10 +96,8 @@ function AddDiscipline() {
     });
 }
 function DelDiscipline() {
-    // eslint-disable-next-line
-    let DelItemId = document.cookie.replace(/(?:(?:^|.*;\s*)DelItemId\s*\=\s*([^;]*).*$)|^.*$/, "$1");
-    // eslint-disable-next-line
-    let DelItemName = document.cookie.replace(/(?:(?:^|.*;\s*)DelItemName\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+    let DelItemId = localStorage.getItem('DelItemId');
+    let DelItemName = localStorage.getItem('DelItemName');
     const delDiscipline = new FormData();
     delDiscipline.append('name', DelItemName);
     fetch('http://nstu-tracker.thematrix.su/discipline/'+DelItemId,{
@@ -113,18 +111,14 @@ function DelDiscipline() {
     }).catch(function(error) {
         console.log('DELETE failed', error.message)
     });
-    document.cookie = 'DelItemId=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-    document.cookie = 'DelItemName=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 }
 function EditDiscipline() {
-    // eslint-disable-next-line
-    let EditItemId = document.cookie.replace(/(?:(?:^|.*;\s*)EditItemId\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+    let EditItemId = localStorage.getItem('EditItemId');
     fetch('http://nstu-tracker.thematrix.su/discipline/'+EditItemId,{
         method: "PUT",
         headers:{
             "api-token": localStorage.getItem('token'),
         },
-        // body:new URLSearchParams({name: document.getElementById("editDisciplineNameLabel").value})
         body: new URLSearchParams({name: document.getElementById("editDisciplineNameLabel").value})
     }).then(function (response) {
         return response;

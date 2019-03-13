@@ -80,9 +80,9 @@ export class ListDiscipline extends Component {
     }
 }
 class DelButton extends Component{
-    delItem = () => {
-        document.cookie = "DelItemId="+this.props.item.id;
-        document.cookie = "DelItemName="+this.props.item.name;
+    delItem = () => {;
+        localStorage.setItem('DelItemId', this.props.item.id);
+        localStorage.setItem('DelItemName', this.props.item.name);
     };
     render(){
         return(
@@ -95,7 +95,7 @@ class DelButton extends Component{
 }
 class EditButton extends Component{
     EditItem = () => {
-        document.cookie = "EditItemId="+this.props.item.id;
+        localStorage.setItem('EditItemId', this.props.item.id);
     };
     render(){
         return(
