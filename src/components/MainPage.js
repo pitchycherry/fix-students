@@ -1,9 +1,9 @@
 import React, {Component, Fragment} from 'react'
 import "../css/index.css"
-import {BASE_PATH, GROUP_PATH, LOGIN_PATH} from "./App";
+import {BASE_PATH, LOGIN_PATH} from "./App";
 import {CreateRequest} from "./CreateRequest";
 import {store} from "../index";
-import {getAdminInfo, setLogin, setPassword} from "../store/actions/actions";
+import {setLogin, setPassword, setUserInfo} from "../store/actions/actions";
 
 export class MainPage extends Component {
     handleChangeLogin = event => {
@@ -25,7 +25,6 @@ export class MainPage extends Component {
             localStorage.setItem('token', response.data.token);
             localStorage.setItem('login', response.data.user.login);
             console.log("Пользователь аутентифицирован", response);
-            store.dispatch(getAdminInfo());
             // переход на страницу групп
             this.props.history.push('/groups');
         })

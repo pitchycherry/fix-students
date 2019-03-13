@@ -6,11 +6,11 @@ export const setPassword = (password) => ({
     type: "SET_PASSWORD",
     password: password
 });
-export const getAdminInfo = () => ({
-    type: "GET_INFO",
-    info: localStorage.getItem('login')
-});
 export const getListGroup = (list_group) => ({
     type: "GET_LIST-GROUP",
     list_group: list_group
+});
+export const setGroup = (group) => ({
+    type: "SET_GROUP",
+    current_group: group
 });

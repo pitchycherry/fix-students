@@ -2,6 +2,7 @@ import React, {Component, Fragment} from "react";
 import {ListGroup} from "./ListGroup";
 import {Header} from "./Header";
 import {PageGroupPopup} from "./PageGroupPopup";
+import {store} from "../index";
 
 export class PageGroup extends Component {
     render() {
@@ -9,7 +10,7 @@ export class PageGroup extends Component {
             <Fragment>
                 <Header/>
                 <PageGroupPopup/>
-                <ListGroup/>
+                <ListGroup store={store}/>
             </Fragment>
         )
     }

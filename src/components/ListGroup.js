@@ -1,25 +1,23 @@
 import React, {Component, Fragment} from "react";
+import uuidv1 from 'uuid'
 import 'font-awesome/css/font-awesome.min.css';
 import {CreateRequest} from "./CreateRequest";
 import {BASE_PATH, GROUP_PATH} from "./App";
 import {store} from "../index";
 import {getListGroup} from "../store/actions/actions";
+import {connect} from "react-redux";
 
 export class ListGroup extends Component {
     componentDidMount() {
         CreateRequest({
             headers: {
                 "api-token": localStorage.getItem('token'),
-                "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
             },
             path: `${BASE_PATH}${GROUP_PATH}`,
             method: "GET"
         }).then(response => {
             console.log("Список групп получен", response);
-            let res = response.data.map(group => {
-                return group.name;
-            });
-            store.dispatch(getListGroup(res));
+            store.dispatch(getListGroup(response));
             console.log(store.getState().list_group)
         })
             .catch(() => {
@@ -59,46 +57,33 @@ export class ListGroup extends Component {
                                  data-parent="#accordionExample">
                                 <div className="card-body">
                                     <ul className="list-group list-group-flush">
-                                        {store.getState().list_group}
 
-                                        <li className="list-group-item">
-                                            <div className="row">
-                                                <div className="col text-left name-group">
-                                                    АВТ-810
-                                                </div>
-                                                <div className="col text-right">
-                                                    <button type="button" className="btn" data-toggle="modal"
-                                                            data-target="#editGroupModal">
-                                                        <i className="fas fa-pencil-alt"></i>
-                                                    </button>
-                                                    <button type="button" className="btn" data-toggle="modal"
-                                                            data-target="#deleteGroupModal">
-                                                        <i className="fas fa-trash-alt"></i>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li className="list-group-item">
-                                            <div className="row">
-                                                <div className="col text-left name-group">
-                                                    АВТ-810
-                                                </div>
-                                                <div className="col text-right">
-                                                    <button type="button" className="btn" data-toggle="modal"
-                                                            data-target="#editGroupModal">
-                                                        <i className="fas fa-pencil-alt"></i>
-                                                    </button>
-                                                    <button type="button" className="btn" data-toggle="modal"
-                                                            data-target="#deleteGroupModal">
-                                                        <i className="fas fa-trash-alt"></i>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </li>
+                                        {Object.values(store.getState().list_group).map(group => {
+                                            return (
+                                                <li key={uuidv1()} className="list-group-item">
+                                                    <div className="row">
+                                                        <div className="col text-left name-group">
+                                                            {group}
+                                                        </div>
+                                                        <div className="col text-right">
+                                                            <button type="button" className="btn" data-toggle="modal"
+                                                                    data-target="#editGroupModal">
+                                                                <i className="fas fa-pencil-alt"></i>
+                                                            </button>
+                                                            <button type="button" className="btn" data-toggle="modal"
+                                                                    data-target="#deleteGroupModal">
+                                                                <i className="fas fa-trash-alt"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            )
+                                        })}
                                     </ul>
                                 </div>
                             </div>
                         </div>
+
                         <div className="card">
                             <div className="card-header" id="headingTwo">
                                 <button className="btn btn-link collapsed" type="button" data-toggle="collapse"

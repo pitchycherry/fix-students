@@ -1,4 +1,8 @@
-export default (state, action) => {
+const initialState = {
+    list_group: [],
+    user: "Nik"
+};
+export default (state = initialState, action) => {
     switch (action.type) {
         case "SET_LOGIN":
             return {
@@ -8,13 +12,15 @@ export default (state, action) => {
             return {
                 ...state, password: action.password
             };
-        case "GET_INFO":
-            return {
-                ...state, info: action.info
-            };
         case "GET_LIST-GROUP":
             return {
-                ...state, list_group: action.list_group
+                ...state, list_group: action.list_group.data.map(group => {
+                    return group.name;
+                })
+            };
+        case "SET_GROUP":
+            return {
+                ...state, current_group: action.current_group
             };
         default:
             return state;
