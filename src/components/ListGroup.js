@@ -6,15 +6,28 @@ import {BASE_PATH, GROUP_PATH} from "./App";
 import {store} from "../index";
 import {getListGroup} from "../store/actions/actions";
 import {connect} from "react-redux";
+import axios from 'axios'
 
 export class ListGroup extends Component {
     componentDidMount() {
-        CreateRequest({
+        /*CreateRequest({
             headers: {
                 "api-token": localStorage.getItem('token'),
             },
             path: `${BASE_PATH}${GROUP_PATH}`,
             method: "GET"
+        }).then(response => {
+            console.log("Список групп получен", response);
+            store.dispatch(getListGroup(response));
+            console.log(store.getState().list_group)
+        })
+            .catch(() => {
+                console.log("Список групп не получен");
+            });*/
+        axios({
+            method: 'GET',
+            headers: {"api-token": localStorage.getItem('token')},
+            url: `${BASE_PATH}${GROUP_PATH}`
         }).then(response => {
             console.log("Список групп получен", response);
             store.dispatch(getListGroup(response));

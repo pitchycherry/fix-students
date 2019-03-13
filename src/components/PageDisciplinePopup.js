@@ -1,4 +1,5 @@
 import React, {Fragment} from 'react';
+import $ from "jquery";
 //БРАТЬ ТОКЕН ИЗ store
 export const PageDisciplinePopup = () => {
     return (
@@ -11,7 +12,7 @@ export const PageDisciplinePopup = () => {
                         <form id="addDiscipline">
                             <div className="modal-header bg-light">
                                 <h5 className="modal-title" id="addDisciplineModalLabel">Добавление дисциплины</h5>
-                                <button type="button" className="close" data-dismiss="modal" aria-label="Close" >
+                                <button type="button" className="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
@@ -23,8 +24,12 @@ export const PageDisciplinePopup = () => {
                                 </div>
                             </div>
                             <div className="modal-footer">
-                                <button type="submit" className="btn btn-outline-primary" onClick={AddDiscipline}>Добавить</button>
-                                <button type="button" className="btn btn-outline-secondary" data-dismiss="modal">Отмена</button>
+                                <button type="button" className="btn btn-outline-primary"
+                                        onClick={AddDiscipline}>Добавить
+                                </button>
+                                <button type="button" className="btn btn-outline-secondary"
+                                        data-dismiss="modal">Отмена
+                                </button>
                             </div>
                         </form>
                     </div>
@@ -37,14 +42,19 @@ export const PageDisciplinePopup = () => {
                     <div className="modal-content">
                         <form id="addDiscipline">
                             <div className="modal-header bg-light">
-                                <h5 className="modal-title" id="deleteDisciplineModalLabel">Вы уверены, что хотите удалить дисицплину?</h5>
-                                <button type="button" className="close" data-dismiss="modal" aria-label="Close" >
+                                <h5 className="modal-title" id="deleteDisciplineModalLabel">Вы уверены, что хотите
+                                    удалить дисицплину?</h5>
+                                <button type="button" className="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
                             <div className="modal-footer">
-                                <button type="submit" className="btn btn-outline-primary" onClick={DelDiscipline}>Удалить</button>
-                                <button type="button" className="btn btn-outline-secondary" data-dismiss="modal">Отмена</button>
+                                <button type="button" className="btn btn-outline-primary"
+                                        onClick={DelDiscipline}>Удалить
+                                </button>
+                                <button type="button" className="btn btn-outline-secondary"
+                                        data-dismiss="modal">Отмена
+                                </button>
                             </div>
                         </form>
                     </div>
@@ -65,13 +75,17 @@ export const PageDisciplinePopup = () => {
                             <div className="modal-body">
                                 <div className="form-group">
                                     <label htmlFor="editDisciplineName">Изменение дисциплины</label>
-                                    <input className="form-control" type="text" name="value" id="editDisciplineNameLabel"
+                                    <input className="form-control" type="text" name="value"
+                                           id="editDisciplineNameLabel"
                                            placeholder="Введите новое название дисциплины"/>
                                 </div>
                             </div>
                             <div className="modal-footer">
-                                <button type="submit" className="btn btn-outline-primary" onClick={EditDiscipline}>Применить</button>
-                                <button type="button" className="btn btn-outline-secondary" data-dismiss="modal" >Отмена</button>
+                                <button type="button" className="btn btn-outline-primary"
+                                        onClick={EditDiscipline}>Применить
+                                </button>
+                                <button type="button" className="btn btn-outline-secondary" data-dismiss="modal">Отмена
+                                </button>
                             </div>
                         </form>
                     </div>
@@ -80,49 +94,61 @@ export const PageDisciplinePopup = () => {
         </Fragment>
     )
 };
+
 function AddDiscipline() {
     const newDiscipline = new FormData();
     newDiscipline.append('name', document.getElementById("addDisciplineCourse").value);
-    fetch('http://nstu-tracker.thematrix.su/discipline',{
+    fetch('http://nstu-tracker.thematrix.su/discipline', {
         method: "POST",
-        headers:{
+        headers: {
             "api-token": localStorage.getItem('token'),
         },
-        body:newDiscipline
+        body: newDiscipline
     }).then(function (response) {
+        $(function () {
+            $('#addDisciplineModal').modal('toggle');
+        });
         return response.json()
-    }).catch(function(error) {
+    }).catch(function (error) {
         console.log('POST add failed', error.message)
     });
 }
+
 function DelDiscipline() {
     let DelItemId = localStorage.getItem('DelItemId');
     let DelItemName = localStorage.getItem('DelItemName');
     const delDiscipline = new FormData();
     delDiscipline.append('name', DelItemName);
-    fetch('http://nstu-tracker.thematrix.su/discipline/'+DelItemId,{
+    fetch('http://nstu-tracker.thematrix.su/discipline/' + DelItemId, {
         method: "DELETE",
-        headers:{
+        headers: {
             "api-token": localStorage.getItem('token'),
         },
-        body:delDiscipline
+        body: delDiscipline
     }).then(function (response) {
+        $(function () {
+            $('#deleteDisciplineModal').modal('toggle');
+        });
         return response.json()
-    }).catch(function(error) {
+    }).catch(function (error) {
         console.log('DELETE failed', error.message)
     });
 }
+
 function EditDiscipline() {
     let EditItemId = localStorage.getItem('EditItemId');
-    fetch('http://nstu-tracker.thematrix.su/discipline/'+EditItemId,{
+    fetch('http://nstu-tracker.thematrix.su/discipline/' + EditItemId, {
         method: "PUT",
-        headers:{
+        headers: {
             "api-token": localStorage.getItem('token'),
         },
         body: new URLSearchParams({name: document.getElementById("editDisciplineNameLabel").value})
     }).then(function (response) {
+        $(function () {
+            $('#editDisciplineModal').modal('toggle');
+        });
         return response;
-    }).catch(function(error) {
+    }).catch(function (error) {
         console.log('EDIT failed', error);
     });
     document.cookie = 'EditItemId=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
