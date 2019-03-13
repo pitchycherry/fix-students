@@ -9,7 +9,7 @@ export class ListDiscipline extends Component {
     loadList = () =>{
         fetch('http://nstu-tracker.thematrix.su/discipline',{
             method: "GET",
-            headers:{"api-token": "xpV3MjwKkWYPY2bhchWL40eu"}
+            headers:{"api-token": localStorage.getItem('token')}
         }).then(function (response) {
             return response.json()
         }).then(data =>{
