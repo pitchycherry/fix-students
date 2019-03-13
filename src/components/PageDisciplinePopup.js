@@ -94,7 +94,6 @@ export const PageDisciplinePopup = () => {
         </Fragment>
     )
 };
-
 function AddDiscipline() {
     const newDiscipline = new FormData();
     newDiscipline.append('name', document.getElementById("addDisciplineCourse").value);
@@ -105,15 +104,15 @@ function AddDiscipline() {
         },
         body: newDiscipline
     }).then(function (response) {
-        $(function () {
-            $('#addDisciplineModal').modal('toggle');
-        });
+        $('#addDisciplineModal').modal('toggle');
         return response.json()
     }).catch(function (error) {
         console.log('POST add failed', error.message)
     });
+    setTimeout(() => {
+        document.location.reload(true);
+    }, 100);
 }
-
 function DelDiscipline() {
     let DelItemId = localStorage.getItem('DelItemId');
     let DelItemName = localStorage.getItem('DelItemName');
@@ -126,15 +125,17 @@ function DelDiscipline() {
         },
         body: delDiscipline
     }).then(function (response) {
-        $(function () {
-            $('#deleteDisciplineModal').modal('toggle');
-        });
+        $('#deleteDisciplineModal').modal('toggle');
         return response.json()
     }).catch(function (error) {
         console.log('DELETE failed', error.message)
     });
+    localStorage.setItem('DelItemId', '');
+    localStorage.setItem('DelItemName', '');
+    setTimeout(() => {
+        document.location.reload(true);
+    }, 100);
 }
-
 function EditDiscipline() {
     let EditItemId = localStorage.getItem('EditItemId');
     fetch('http://nstu-tracker.thematrix.su/discipline/' + EditItemId, {
@@ -144,12 +145,13 @@ function EditDiscipline() {
         },
         body: new URLSearchParams({name: document.getElementById("editDisciplineNameLabel").value})
     }).then(function (response) {
-        $(function () {
-            $('#editDisciplineModal').modal('toggle');
-        });
+        $('#editDisciplineModal').modal('toggle');
         return response;
     }).catch(function (error) {
         console.log('EDIT failed', error);
     });
-    document.cookie = 'EditItemId=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+    setTimeout(() => {
+        document.location.reload(true);
+    }, 100);
+    localStorage.setItem('EditItemId', '');
 }

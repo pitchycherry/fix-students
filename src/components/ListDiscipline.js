@@ -80,7 +80,7 @@ export class ListDiscipline extends Component {
     }
 }
 class DelButton extends Component{
-    delItem = () => {;
+    delItem = () => {
         localStorage.setItem('DelItemId', this.props.item.id);
         localStorage.setItem('DelItemName', this.props.item.name);
     };
