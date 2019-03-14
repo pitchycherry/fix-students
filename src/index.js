@@ -7,7 +7,7 @@ import App from './components/App';
 import {BrowserRouter, Switch, Route} from "react-router-dom";
 import {MainPage} from "./components/MainPage";
 import {PageGroup} from "./components/PageGroup";
-import {PageTeacher} from "./components/PageTeacher";
+import {PageProfessor} from "./components/PageProfessor";
 import {PageDiscipline} from "./components/PageDiscipline";
 import {PageStudent} from "./components/PageStudent";
 
@@ -22,9 +22,9 @@ const render = function () {
                 <Switch>
                     <Route exact path='/' component={MainPage}/>
                     <Route path='/groups' component={PageGroup}/>
-                    <Route path='/teachers' component={PageTeacher}/>
-                    <Route path='/disciplines' component={PageDiscipline} />
-                    <Route path='/students' component={PageStudent} />
+                    <Route path='/teachers' component={PageProfessor}/>
+                    <Route path='/disciplines' component={PageDiscipline}/>
+                    <Route path='/students' component={PageStudent}/>
                 </Switch>
             </App>
         </BrowserRouter>

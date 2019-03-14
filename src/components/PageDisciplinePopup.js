@@ -111,7 +111,7 @@ function AddDiscipline() {
     });
     setTimeout(() => {
         document.location.reload(true);
-    }, 100);
+    }, 500);
 }
 function DelDiscipline() {
     let DelItemId = localStorage.getItem('DelItemId');
@@ -134,7 +134,7 @@ function DelDiscipline() {
     localStorage.setItem('DelItemName', '');
     setTimeout(() => {
         document.location.reload(true);
-    }, 100);
+    }, 500);
 }
 function EditDiscipline() {
     let EditItemId = localStorage.getItem('EditItemId');
@@ -152,6 +152,6 @@ function EditDiscipline() {
     });
     setTimeout(() => {
         document.location.reload(true);
-    }, 100);
+    }, 500);
     localStorage.setItem('EditItemId', '');
 }

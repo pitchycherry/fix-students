@@ -2,9 +2,27 @@ import React, {Component} from "react";
 import 'font-awesome/css/font-awesome.min.css';
 import {BASE_PATH, PROFESSOR_PATH} from "./App";
 import {store} from "../index";
-import {getListProfessor} from "../store/actions/actions";
+import {
+    getListProfessor,
+    setCurrentProfessorFirstname,
+    setCurrentProfessorId,
+    setCurrentProfessorLogin,
+    setCurrentProfessorMiddlename,
+    setCurrentProfessorPassword,
+    setCurrentProfessorSurname
+} from "../store/actions/actions";
 
-export class ListTeacher extends Component {
+export class ListProfessor extends Component {
+    handleSelectProfessor = (event, id, firstname, surname, middlename, login, password) => {
+        event.preventDefault();
+        store.dispatch(setCurrentProfessorId(id));
+        store.dispatch(setCurrentProfessorFirstname(firstname));
+        store.dispatch(setCurrentProfessorSurname(surname));
+        store.dispatch(setCurrentProfessorMiddlename(middlename));
+        store.dispatch(setCurrentProfessorLogin(login));
+        store.dispatch(setCurrentProfessorPassword(password));
+    };
+
     componentDidMount() {
         fetch(`${BASE_PATH}${PROFESSOR_PATH}`, {
             method: "GET",
@@ -28,10 +46,10 @@ export class ListTeacher extends Component {
                             <p className="classic-title">Управление</p>
                         </div>
                         <button type="button" className="btn btn-outline-primary btn-block" data-toggle="modal"
-                                data-target="#addGroupModal">Добавить преподавателя
+                                data-target="#addProfessorModal">Добавить преподавателя
                         </button>
                         <button type="button" className="btn btn-outline-primary btn-block" data-toggle="modal"
-                                data-target="#addGroupModal">Добавить преподавателя в дисциплину
+                                data-target="#addProfessorInDisciplineModal">Добавить преподавателя в дисциплину
                         </button>
                     </div>
 
@@ -47,11 +65,13 @@ export class ListTeacher extends Component {
                                             className="col text-left name-group">{professor.surname} {professor.firstname} {professor.middlename}</div>
                                         <div className="col text-right">
                                             <button type="button" className="btn" data-toggle="modal"
-                                                    data-target="#editTeacherModal">
+                                                    data-target="#editProfessorModal"
+                                                    onClick={(event) => this.handleSelectProfessor(event, professor.id, professor.firstname, professor.surname, professor.middlename, professor.login, professor.password)}>
                                                 <i className="fas fa-pencil-alt"></i>
                                             </button>
                                             <button type="button" className="btn" data-toggle="modal"
-                                                    data-target="#deleteTeacherModal">
+                                                    data-target="#deleteProfessorModal"
+                                                    onClick={(event) => this.handleSelectProfessor(event, professor.id)}>
                                                 <i className="fas fa-trash-alt"></i>
                                             </button>
                                         </div>

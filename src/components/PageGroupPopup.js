@@ -32,13 +32,10 @@ export class PageGroupPopup extends Component {
     };
     handleSubmitDeleteGroup = event => {
         event.preventDefault();
-        const deleteGroup = new FormData();
-        deleteGroup.append('name', store.getState().current_group.name);
 
         fetch(`${BASE_PATH}${GROUP_PATH}/${store.getState().current_group.id}`, {
             method: "DELETE",
             headers: {"api-token": localStorage.getItem('token')},
-            body: deleteGroup
         }).then(function (response) {
             return response.json()
         }).then(response => {
@@ -94,7 +91,8 @@ export class PageGroupPopup extends Component {
                                     <div className="form-group">
                                         <label htmlFor="addGroupName">Название группы</label>
                                         <input className="form-control" type="text" name="name" id="addGroupName"
-                                               placeholder="Введите название группы" onChange={this.handleChangeGroup}/>
+                                               placeholder="Введите название группы" pattern="[A-Za-zА-Яа-яЁё]+-[0-9]+"
+                                               onChange={this.handleChangeGroup}/>
                                     </div>
                                 </div>
                                 <div className="modal-footer">
@@ -144,11 +142,12 @@ export class PageGroupPopup extends Component {
                                     <div className="form-group">
                                         <label htmlFor="editGroupName">Новое название группы</label>
                                         <input className="form-control" type="text" name="value" id="editGroupName"
-                                               placeholder="Введите название группы" onChange={this.handleChangeGroup}/>
+                                               placeholder="Введите название группы" pattern="[A-Za-zА-Яа-яЁё]+-[0-9]+"
+                                               onChange={this.handleChangeGroup}/>
                                     </div>
                                 </div>
                                 <div className="modal-footer">
-                                    <button type="submit" className="btn btn-outline-primary">Добавить</button>
+                                    <button type="submit" className="btn btn-outline-primary">Изменить</button>
                                     <button type="button" className="btn btn-outline-secondary"
                                             data-dismiss="modal">Отмена
                                     </button>
