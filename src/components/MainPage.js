@@ -1,9 +1,8 @@
 import React, {Component, Fragment} from 'react'
 import "../css/index.css"
 import {BASE_PATH, LOGIN_PATH} from "./App";
-import {CreateRequest} from "./CreateRequest";
 import {store} from "../index";
-import {setLogin, setPassword, setUserInfo} from "../store/actions/actions";
+import {setLogin, setPassword} from "../store/actions/actions";
 
 export class MainPage extends Component {
     handleChangeLogin = event => {
@@ -18,10 +17,13 @@ export class MainPage extends Component {
         userData.append('login', store.getState().login);
         userData.append('password', store.getState().password);
 
-        CreateRequest({
-            path: `${BASE_PATH}${LOGIN_PATH}`,
-            method: "POST"
-        }, userData).then(response => {
+        fetch(`${BASE_PATH}${LOGIN_PATH}`, {
+            method: "POST",
+            headers: {"api-token": localStorage.getItem('token')},
+            body: userData
+        }).then(function (response) {
+            return response.json()
+        }).then(response => {
             localStorage.setItem('token', response.data.token);
             localStorage.setItem('login', response.data.user.login);
             console.log("Пользователь аутентифицирован", response);

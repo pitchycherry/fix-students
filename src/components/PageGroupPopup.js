@@ -1,33 +1,77 @@
 import React, {Component, Fragment} from 'react';
 import $ from 'jquery'
 import {store} from "../index";
-import {setGroup} from "../store/actions/actions";
-import {CreateRequest} from "./CreateRequest";
+import {setCurrentGroup} from "../store/actions/actions";
 import {BASE_PATH, GROUP_PATH} from "./App";
 
 export class PageGroupPopup extends Component {
     handleChangeGroup = event => {
-        store.dispatch(setGroup(event.target.value));
+        store.dispatch(setCurrentGroup(store.getState().current_group.id, event.target.value));
     };
-    handleSubmit = event => {
+
+    handleSubmitAddGroup = event => {
         event.preventDefault();
         const current_group = new FormData();
-        current_group.append('name', store.getState().current_group);
-
-        CreateRequest({
-            headers: {
-                "api-token": localStorage.getItem('token'),
-            },
-            path: `${BASE_PATH}${GROUP_PATH}`,
-            method: "POST"
-        }, current_group).then(response => {
+        current_group.append('name', store.getState().current_group.name);
+        fetch(`${BASE_PATH}${GROUP_PATH}`, {
+            method: "POST",
+            headers: {"api-token": localStorage.getItem('token')},
+            body: current_group
+        }).then(function (response) {
+            return response.json()
+        }).then(response => {
             $(function () {
                 $('#addGroupModal').modal('toggle');
             });
+            document.location.reload(true);
             console.log("Новая группа добавлена", response);
         })
             .catch(() => {
                 console.log("Новая группа не добавлена");
+            });
+    };
+    handleSubmitDeleteGroup = event => {
+        event.preventDefault();
+        const deleteGroup = new FormData();
+        deleteGroup.append('name', store.getState().current_group.name);
+
+        fetch(`${BASE_PATH}${GROUP_PATH}/${store.getState().current_group.id}`, {
+            method: "DELETE",
+            headers: {"api-token": localStorage.getItem('token')},
+            body: deleteGroup
+        }).then(function (response) {
+            return response.json()
+        }).then(response => {
+            $(function () {
+                $('#deleteGroupModal').modal('toggle');
+            });
+            document.location.reload(true);
+            console.log("Группа удалена", response);
+        })
+            .catch(() => {
+                console.log("Группа не удалена");
+            });
+    };
+    handleSubmitEditGroup = event => {
+        event.preventDefault();
+        const editGroup = new FormData();
+        editGroup.append('name', store.getState().current_group.name);
+
+        fetch(`${BASE_PATH}${GROUP_PATH}/${store.getState().current_group.id}`, {
+            method: "PUT",
+            headers: {"api-token": localStorage.getItem('token')},
+            body: new URLSearchParams(editGroup)
+        }).then(function (response) {
+            return response.json()
+        }).then(response => {
+            $(function () {
+                $('#editGroupModal').modal('toggle');
+            });
+            document.location.reload(true);
+            console.log("Группа изменена", response);
+        })
+            .catch(() => {
+                console.log("Группа не изменена");
             });
     };
 
@@ -39,7 +83,7 @@ export class PageGroupPopup extends Component {
                      aria-labelledby="addGroupModalLabel" aria-hidden="true">
                     <div className="modal-dialog" role="document">
                         <div className="modal-content">
-                            <form id="addGroup" onSubmit={this.handleSubmit}>
+                            <form id="addGroup" onSubmit={this.handleSubmitAddGroup}>
                                 <div className="modal-header bg-light">
                                     <h5 className="modal-title" id="addGroupModalLabel">Добавление группы</h5>
                                     <button type="button" className="close" data-dismiss="modal" aria-label="Close">
@@ -47,11 +91,6 @@ export class PageGroupPopup extends Component {
                                     </button>
                                 </div>
                                 <div className="modal-body">
-                                    <div className="form-group">
-                                        <label htmlFor="addGroupCourse">Номер курса</label>
-                                        <input className="form-control" type="text" name="value" id="addGroupCourse"
-                                               placeholder="Введите номер курса"/>
-                                    </div>
                                     <div className="form-group">
                                         <label htmlFor="addGroupName">Название группы</label>
                                         <input className="form-control" type="text" name="name" id="addGroupName"
@@ -75,15 +114,17 @@ export class PageGroupPopup extends Component {
                      aria-labelledby="deleteGroupModal" aria-hidden="true">
                     <div className="modal-dialog" role="document">
                         <div className="modal-content">
-                            <div className="modal-body">
-                                <p>Вы уверены, что хотите удалить группу?</p>
-                            </div>
-                            <div className="modal-footer">
-                                <button type="button" className="btn btn-primary">Удалить</button>
-                                <button type="button" className="btn btn-outline-secondary"
-                                        data-dismiss="modal">Отмена
-                                </button>
-                            </div>
+                            <form id="deleteGroup" onSubmit={this.handleSubmitDeleteGroup}>
+                                <div className="modal-body">
+                                    <p>Вы уверены, что хотите удалить группу?</p>
+                                </div>
+                                <div className="modal-footer">
+                                    <button type="submit" className="btn btn-primary">Удалить</button>
+                                    <button type="button" className="btn btn-outline-secondary"
+                                            data-dismiss="modal">Отмена
+                                    </button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -92,7 +133,7 @@ export class PageGroupPopup extends Component {
                      aria-labelledby="editGroupModalLabel" aria-hidden="true">
                     <div className="modal-dialog" role="document">
                         <div className="modal-content">
-                            <form id="editGroup">
+                            <form id="editGroup" onSubmit={this.handleSubmitEditGroup}>
                                 <div className="modal-header bg-light">
                                     <h5 className="modal-title" id="editGroupModalLabel">Редактирование группы</h5>
                                     <button type="button" className="close" data-dismiss="modal" aria-label="Close">
@@ -103,7 +144,7 @@ export class PageGroupPopup extends Component {
                                     <div className="form-group">
                                         <label htmlFor="editGroupName">Новое название группы</label>
                                         <input className="form-control" type="text" name="value" id="editGroupName"
-                                               placeholder="Введите название группы"/>
+                                               placeholder="Введите название группы" onChange={this.handleChangeGroup}/>
                                     </div>
                                 </div>
                                 <div className="modal-footer">

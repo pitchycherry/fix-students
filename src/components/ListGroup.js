@@ -1,44 +1,34 @@
 import React, {Component, Fragment} from "react";
-import uuidv1 from 'uuid'
 import 'font-awesome/css/font-awesome.min.css';
-import {CreateRequest} from "./CreateRequest";
 import {BASE_PATH, GROUP_PATH} from "./App";
 import {store} from "../index";
-import {getListGroup} from "../store/actions/actions";
-import {connect} from "react-redux";
-import axios from 'axios'
+import {getListGroup, setCurrentGroup} from "../store/actions/actions";
 
 export class ListGroup extends Component {
+    handleSelectGroup = (event, id, name) => {
+        event.preventDefault();
+        store.dispatch(setCurrentGroup(id, name));
+    };
+
     componentDidMount() {
-        /*CreateRequest({
-            headers: {
-                "api-token": localStorage.getItem('token'),
-            },
-            path: `${BASE_PATH}${GROUP_PATH}`,
-            method: "GET"
-        }).then(response => {
-            console.log("Список групп получен", response);
-            store.dispatch(getListGroup(response));
-            console.log(store.getState().list_group)
-        })
-            .catch(() => {
-                console.log("Список групп не получен");
-            });*/
-        axios({
-            method: 'GET',
-            headers: {"api-token": localStorage.getItem('token')},
-            url: `${BASE_PATH}${GROUP_PATH}`
-        }).then(response => {
-            console.log("Список групп получен", response);
-            store.dispatch(getListGroup(response));
-            console.log(store.getState().list_group)
-        })
-            .catch(() => {
-                console.log("Список групп не получен");
-            });
+        fetch(`${BASE_PATH}${GROUP_PATH}`, {
+            method: "GET",
+            headers: {"api-token": localStorage.getItem('token')}
+        }).then(function (response) {
+            return response.json()
+        }).then(data => {
+            store.dispatch(getListGroup(data));
+            console.log("Список групп получен", data);
+        }).catch(function (error) {
+            console.log('Список групп не получен', error.message)
+        });
     }
 
     render() {
+        /*Вычисления ниже ипользуются для определения последей цифры года для распределения групп по курсам*/
+        const numYear = (new Date().getFullYear()).toString()[3] === "0" ? 10 : (new Date().getFullYear()).toString()[3];
+        const currentNumYear = (new Date().getMonth()) >= Number(9) ? parseInt(numYear) : parseInt(numYear) - 1;
+
         return (
             <Fragment>
                 <div className="container-fluid">
@@ -70,27 +60,32 @@ export class ListGroup extends Component {
                                  data-parent="#accordionExample">
                                 <div className="card-body">
                                     <ul className="list-group list-group-flush">
-
                                         {Object.values(store.getState().list_group).map(group => {
-                                            return (
-                                                <li key={uuidv1()} className="list-group-item">
-                                                    <div className="row">
-                                                        <div className="col text-left name-group">
-                                                            {group}
+                                            if (Number(group.name.split("-")[1][0]) === currentNumYear) {
+                                                return (
+                                                    <li key={group.id} className="list-group-item">
+                                                        <div className="row">
+                                                            <div className="col text-left name-group">
+                                                                {group.name}
+                                                            </div>
+                                                            <div className="col text-right">
+                                                                <button type="button" className="btn"
+                                                                        data-toggle="modal"
+                                                                        data-target="#editGroupModal"
+                                                                        onClick={(event) => this.handleSelectGroup(event, group.id, group.name)}>
+                                                                    <i className="fas fa-pencil-alt"></i>
+                                                                </button>
+                                                                <button type="button" className="btn"
+                                                                        data-toggle="modal"
+                                                                        data-target="#deleteGroupModal"
+                                                                        onClick={(event) => this.handleSelectGroup(event, group.id, group.name)}>
+                                                                    <i className="fas fa-trash-alt"></i>
+                                                                </button>
+                                                            </div>
                                                         </div>
-                                                        <div className="col text-right">
-                                                            <button type="button" className="btn" data-toggle="modal"
-                                                                    data-target="#editGroupModal">
-                                                                <i className="fas fa-pencil-alt"></i>
-                                                            </button>
-                                                            <button type="button" className="btn" data-toggle="modal"
-                                                                    data-target="#deleteGroupModal">
-                                                                <i className="fas fa-trash-alt"></i>
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </li>
-                                            )
+                                                    </li>
+                                                )
+                                            }
                                         })}
                                     </ul>
                                 </div>
@@ -109,23 +104,33 @@ export class ListGroup extends Component {
                                  data-parent="#accordionExample">
                                 <div className="card-body">
                                     <ul className="list-group list-group-flush">
-                                        <li className="list-group-item">
-                                            <div className="row">
-                                                <div className="col text-left name-group">
-                                                    АВТ-810
-                                                </div>
-                                                <div className="col text-right">
-                                                    <button type="button" className="btn" data-toggle="modal"
-                                                            data-target="#editGroupModal">
-                                                        <i className="fas fa-pencil-alt"></i>
-                                                    </button>
-                                                    <button type="button" className="btn" data-toggle="modal"
-                                                            data-target="#deleteGroupModal">
-                                                        <i className="fas fa-trash-alt"></i>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </li>
+                                        {Object.values(store.getState().list_group).map(group => {
+                                            if (Number(group.name.split("-")[1][0]) === currentNumYear - 1) {
+                                                return (
+                                                    <li key={group.id} className="list-group-item">
+                                                        <div className="row">
+                                                            <div className="col text-left name-group">
+                                                                {group.name}
+                                                            </div>
+                                                            <div className="col text-right">
+                                                                <button type="button" className="btn"
+                                                                        data-toggle="modal"
+                                                                        data-target="#editGroupModal"
+                                                                        onClick={(event) => this.handleSelectGroup(event, group.id, group.name)}>
+                                                                    <i className="fas fa-pencil-alt"></i>
+                                                                </button>
+                                                                <button type="button" className="btn"
+                                                                        data-toggle="modal"
+                                                                        data-target="#deleteGroupModal"
+                                                                        onClick={(event) => this.handleSelectGroup(event, group.id, group.name)}>
+                                                                    <i className="fas fa-trash-alt"></i>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                )
+                                            }
+                                        })}
                                     </ul>
                                 </div>
                             </div>
@@ -142,23 +147,119 @@ export class ListGroup extends Component {
                                  data-parent="#accordionExample">
                                 <div className="card-body">
                                     <ul className="list-group list-group-flush">
-                                        <li className="list-group-item">
-                                            <div className="row">
-                                                <div className="col text-left name-group">
-                                                    АВТ-810
-                                                </div>
-                                                <div className="col text-right">
-                                                    <button type="button" className="btn" data-toggle="modal"
-                                                            data-target="#editGroupModal">
-                                                        <i className="fas fa-pencil-alt"></i>
-                                                    </button>
-                                                    <button type="button" className="btn" data-toggle="modal"
-                                                            data-target="#deleteGroupModal">
-                                                        <i className="fas fa-trash-alt"></i>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </li>
+                                        {Object.values(store.getState().list_group).map(group => {
+                                            if (Number(group.name.split("-")[1][0]) === currentNumYear - 2) {
+                                                return (
+                                                    <li key={group.id} className="list-group-item">
+                                                        <div className="row">
+                                                            <div className="col text-left name-group">
+                                                                {group.name}
+                                                            </div>
+                                                            <div className="col text-right">
+                                                                <button type="button" className="btn"
+                                                                        data-toggle="modal"
+                                                                        data-target="#editGroupModal"
+                                                                        onClick={(event) => this.handleSelectGroup(event, group.id, group.name)}>
+                                                                    <i className="fas fa-pencil-alt"></i>
+                                                                </button>
+                                                                <button type="button" className="btn"
+                                                                        data-toggle="modal"
+                                                                        data-target="#deleteGroupModal"
+                                                                        onClick={(event) => this.handleSelectGroup(event, group.id, group.name)}>
+                                                                    <i className="fas fa-trash-alt"></i>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                )
+                                            }
+                                        })}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="card">
+                            <div className="card-header" id="headingFour">
+                                <button className="btn btn-link collapsed" type="button" data-toggle="collapse"
+                                        data-target="#collapseFour" aria-expanded="false"
+                                        aria-controls="collapseFour">
+                                    4 курс
+                                </button>
+                            </div>
+                            <div id="collapseFour" className="collapse" aria-labelledby="headingFour"
+                                 data-parent="#accordionExample">
+                                <div className="card-body">
+                                    <ul className="list-group list-group-flush">
+                                        {Object.values(store.getState().list_group).map(group => {
+                                            if (Number(group.name.split("-")[1][0]) === currentNumYear - 3) {
+                                                return (
+                                                    <li key={group.id} className="list-group-item">
+                                                        <div className="row">
+                                                            <div className="col text-left name-group">
+                                                                {group.name}
+                                                            </div>
+                                                            <div className="col text-right">
+                                                                <button type="button" className="btn"
+                                                                        data-toggle="modal"
+                                                                        data-target="#editGroupModal"
+                                                                        onClick={(event) => this.handleSelectGroup(event, group.id, group.name)}>
+                                                                    <i className="fas fa-pencil-alt"></i>
+                                                                </button>
+                                                                <button type="button" className="btn"
+                                                                        data-toggle="modal"
+                                                                        data-target="#deleteGroupModal"
+                                                                        onClick={(event) => this.handleSelectGroup(event, group.id, group.name)}>
+                                                                    <i className="fas fa-trash-alt"></i>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                )
+                                            }
+                                        })}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="card">
+                            <div className="card-header" id="headingFive">
+                                <button className="btn btn-link collapsed" type="button" data-toggle="collapse"
+                                        data-target="#collapseFive" aria-expanded="false"
+                                        aria-controls="collapseFive">
+                                    5 курс
+                                </button>
+                            </div>
+                            <div id="collapseFive" className="collapse" aria-labelledby="headingFive"
+                                 data-parent="#accordionExample">
+                                <div className="card-body">
+                                    <ul className="list-group list-group-flush">
+                                        {Object.values(store.getState().list_group).map(group => {
+                                            if (Number(group.name.split("-")[1][0]) === currentNumYear - 4) {
+                                                return (
+                                                    <li key={group.id} className="list-group-item">
+                                                        <div className="row">
+                                                            <div className="col text-left name-group">
+                                                                {group.name}
+                                                            </div>
+                                                            <div className="col text-right">
+                                                                <button type="button" className="btn"
+                                                                        data-toggle="modal"
+                                                                        data-target="#editGroupModal"
+                                                                        onClick={(event) => this.handleSelectGroup(event, group.id, group.name)}>
+                                                                    <i className="fas fa-pencil-alt"></i>
+                                                                </button>
+                                                                <button type="button" className="btn"
+                                                                        data-toggle="modal"
+                                                                        data-target="#deleteGroupModal"
+                                                                        onClick={(event) => this.handleSelectGroup(event, group.id, group.name)}>
+                                                                    <i className="fas fa-trash-alt"></i>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                )
+                                            }
+                                        })}
                                     </ul>
                                 </div>
                             </div>
