@@ -11,21 +11,16 @@ export class ListStudent extends Component {
                             <div className="col text-center">
                                 <p className="classic-title">Группы</p>
                             </div>
-                            <div className="btn-group-vertical col-sm">
-                                <button type="button" className="btn btn-outline-primary btn-block maxHRadioButton">fdsdfs</button>
-                                <button type="button" className="btn btn-outline-primary btn-block maxHRadioButton">fdsdfs</button>
-                                <button type="button" className="btn btn-outline-primary btn-block maxHRadioButton">fdsdfs</button>
-                            </div>
+                            <ButtonGroupVertical/>
                         </div>
-
                         <div className="list-teacher__body col-6">
                             <div className="col text-center">
-                                <p className="classic-title">Список преподавателей</p>
+                                <p className="classic-title">Список студентов</p>
                             </div>
                             <ul className="list-group list-group-flush">
                                 <li className="list-group-item">
                                     <div className="row">
-                                        <div className="col text-left name-group">Романов Е.Л.</div>
+                                        <div className="col text-left name-group">Пиздюк 1</div>
                                         <div className="col text-right">
                                             <button type="button" className="btn" data-toggle="modal"
                                                     data-target="#editTeacherModal">
@@ -43,6 +38,60 @@ export class ListStudent extends Component {
                     </div>
                 </div>
             </Fragment>
+        )
+    }
+}
+
+class ButtonGroupVertical extends Component{
+    state = {
+        arrGroup: null,
+        isLoading: false,
+    };
+    LoadGroup =()=>{
+        console.log("LoadGroup...");
+        fetch('http://nstu-tracker.thematrix.su/group',{
+            method: "GET",
+            headers:{"api-token": localStorage.getItem('token')}
+        }).then(function (response) {
+            return response.json()
+        }).then(data =>{
+            this.setState({isLoading:false, arrGroup: data.data});
+        }).catch(function(error) {
+            console.log('GET findAllGroup failed /n', error.message)
+        });
+    };
+    componentDidMount() {
+        this.setState({isLoading:true});
+        this.LoadGroup();
+    }
+    render(){
+        const {arrGroup, isLoading} = this.state;
+        let GroupList;
+        if (!!arrGroup) {
+            if (arrGroup.length){
+                GroupList = arrGroup.map(function (item) {
+                    return (
+                        <button type="button" className="btn btn-outline-primary btn-block maxHRadioButton" key={item.id}>{item.name}</button>
+                    )
+                })
+            } else{
+                GroupList =
+                    <div className="row list-group-item" key="-1">
+                        <div className="col text-center">Групп нет!</div>
+                    </div>
+            }
+        }
+        return(
+            <div className="btn-group-vertical col-sm">
+                {
+                    isLoading ?
+                        <div className="row list-group-item" key="-1">
+                            <div className="col text-center">Загружаю...</div>
+                        </div>
+                        :
+                        GroupList
+                }
+            </div>
         )
     }
 }
