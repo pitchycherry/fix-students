@@ -2,7 +2,58 @@ import React, {Component, Fragment} from "react";
 import 'font-awesome/css/font-awesome.min.css';
 
 export class ListStudent extends Component {
+    state = {
+        arrStudent: null,
+        isLoading: false,
+    };
+    LoadListStudent =()=>{
+        console.log("LoadListGroup...");
+        fetch('http://nstu-tracker.thematrix.su/student',{
+            method: "GET",
+            headers:{"api-token": localStorage.getItem('token')}
+        }).then(function (response) {
+            return response.json()
+        }).then(data =>{
+            this.setState({isLoading:false, arrStudent: data.data});
+        }).catch(function(error) {
+            console.log('GET findAllStudent failed /n', error.message)
+        });
+    };
+    componentDidMount() {
+        this.setState({isLoading:true});
+        this.LoadListStudent();
+    }
     render() {
+        const {arrStudent, isLoading} = this.state;
+        let ItemStudent;
+        if (!!arrStudent) {
+            if (arrStudent.length){
+                ItemStudent = arrStudent.map(function (item) {
+                    return (
+                        <li className="list-group-item" key={item.id}>
+                            <div className="row">
+                                <div className="col text-left name-group">{item.name}</div>
+                                <div className="col text-right">
+                                    <button type="button" className="btn" data-toggle="modal"
+                                            data-target="#editTeacherModal">
+                                        <i className="fas fa-pencil-alt"></i>
+                                    </button>
+                                    <button type="button" className="btn" data-toggle="modal"
+                                            data-target="#deleteTeacherModal">
+                                        <i className="fas fa-trash-alt"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </li>
+                    )
+                })
+            } else{
+                ItemStudent =
+                    <div className="row list-group-item" key="-1">
+                        <div className="col text-center">Студентов нет!</div>
+                    </div>
+            }
+        }
         return (
             <Fragment>
                 <div className="container-fluid">
@@ -18,21 +69,16 @@ export class ListStudent extends Component {
                                 <p className="classic-title">Список студентов</p>
                             </div>
                             <ul className="list-group list-group-flush">
-                                <li className="list-group-item">
-                                    <div className="row">
-                                        <div className="col text-left name-group">Пиздюк 1</div>
-                                        <div className="col text-right">
-                                            <button type="button" className="btn" data-toggle="modal"
-                                                    data-target="#editTeacherModal">
-                                                <i className="fas fa-pencil-alt"></i>
-                                            </button>
-                                            <button type="button" className="btn" data-toggle="modal"
-                                                    data-target="#deleteTeacherModal">
-                                                <i className="fas fa-trash-alt"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </li>
+                                {
+                                    isLoading ?
+                                        <li className="list-group-item" key="-1">
+                                            <div className="row">
+                                                <div className="col text-center name-group">Загружаю...</div>
+                                            </div>
+                                        </li>
+                                        :
+                                        ItemStudent
+                                }
                             </ul>
                         </div>
                     </div>
@@ -47,8 +93,8 @@ class ButtonGroupVertical extends Component{
         arrGroup: null,
         isLoading: false,
     };
-    LoadGroup =()=>{
-        console.log("LoadGroup...");
+    LoadListGroup =()=>{
+        console.log("LoadListGroup...");
         fetch('http://nstu-tracker.thematrix.su/group',{
             method: "GET",
             headers:{"api-token": localStorage.getItem('token')}
@@ -62,7 +108,7 @@ class ButtonGroupVertical extends Component{
     };
     componentDidMount() {
         this.setState({isLoading:true});
-        this.LoadGroup();
+        this.LoadListGroup();
     }
     render(){
         const {arrGroup, isLoading} = this.state;
