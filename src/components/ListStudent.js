@@ -159,12 +159,12 @@ class ButtonGroupVertical extends Component{
     }
 }
 class EditButton extends Component{
-    setDelId = event => {
-        localStorage.setItem('id', this.props.item.id);
+    setEditId = () => {
+        localStorage.setItem('idSub', this.props.item.id);
     };
     render(){
         return(
-            <button onClick={this.setDelId} type="button" className="btn" data-toggle="modal"
+            <button onClick={this.setEditId} type="button" className="btn" data-toggle="modal"
                     data-target="#editStudentModal">
                 <i className="fas fa-pencil-alt"></i>
             </button>
@@ -172,7 +172,7 @@ class EditButton extends Component{
     }
 }
 class DelButton extends Component{
-    setDelId = event => {
+    setDelId = () => {
         localStorage.setItem('id', this.props.item.id);
     };
     render(){
@@ -210,7 +210,7 @@ class AddPopup extends Component{
             console.log("Cтудент добавлен \n", data);
             this.props.reloadListStudent();
         }).catch(function (error) {
-            console.log('DELETE discipline failed /n', error.message)
+            console.log('Cтудент не добавлен /n', error.message)
         });
         document.getElementById("addStudentSurname").value = '';
         document.getElementById("addStudentFirstname").value = '';
@@ -221,7 +221,7 @@ class AddPopup extends Component{
     };
     selectGroupStudent = event => {
         let tmpArr = store.getState().list_group;
-        for (var i = 0; i < tmpArr.length; ++i) {
+        for (let i = 0; i < tmpArr.length; ++i) {
             if (tmpArr[i].name == event.currentTarget.value){
                 localStorage.setItem('id', tmpArr[i].id);
                 break;
@@ -290,11 +290,136 @@ class AddPopup extends Component{
                                             {itemGroup}
                                         </select>
                                         :
-                                        <label htmlFor="addGroupName">Название группы</label>
+                                        <label htmlFor="addGroupNull">Тут пусто!</label>
                                 }
                             </div>
                             <div className="modal-footer">
                                 <button type="submit" className="btn btn-outline-primary">Добавить</button>
+                                <button type="button" className="btn btn-outline-secondary"
+                                        data-dismiss="modal">Отмена
+                                </button>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+}
+class EditPopup extends Component{
+    editStudent = event => {
+        event.preventDefault();
+        const editStudent = new FormData();
+        editStudent.append('surname', document.getElementById("editStudentSurname").value);
+        editStudent.append('firstname', document.getElementById("editStudentFirstname").value);
+        editStudent.append('middlename', document.getElementById("editStudentMiddlename").value);
+        editStudent.append('login', document.getElementById("editStudentLogin").value);
+        editStudent.append('plainPassword', document.getElementById("editStudentPassword").value);
+        editStudent.append('deviceUid', document.getElementById("editStudentDeviceUid").value);
+        editStudent.append('groupId', localStorage.getItem('id'));
+        let idStudent = localStorage.getItem('idSub');
+        fetch(`${BASE_PATH}${STUDENT_PATH}` + '/' + idStudent, {
+            method: "PUT",
+            headers: {
+                "api-token": localStorage.getItem('token'),
+            },
+            body: new URLSearchParams(editStudent)
+        }).then(function (response) {
+            return response.json()
+        }).then(data => {
+            $('#editStudentModal').modal('toggle');
+            localStorage.setItem('id', '');
+            localStorage.setItem('idSub', '');
+            console.log("Cтудент изменён \n", data);
+            this.props.reloadListStudent();
+        }).catch(function (error) {
+            console.log('Cтудент not edit /n', error.message)
+        });
+        document.getElementById("editStudentSurname").value = '';
+        document.getElementById("editStudentFirstname").value = '';
+        document.getElementById("editStudentMiddlename").value = '';
+        document.getElementById("editStudentLogin").value = '';
+        document.getElementById("editStudentPassword").value = '';
+        document.getElementById("editStudentDeviceUid").value = '';
+    };
+    selectGroupStudent = event => {
+        let tmpArr = store.getState().list_group;
+        if (tmpArr.length)
+            for (let i = 0; i < tmpArr.length; ++i) {
+                if (tmpArr[i].name == event.currentTarget.value){
+                    localStorage.setItem('id', tmpArr[i].id);
+                    break;
+                }
+            }
+    };
+    render(){
+        let itemGroup = store.getState().list_group;
+        if (!!itemGroup) {
+            if (itemGroup.length){
+                itemGroup = itemGroup.map(function (item) {
+                    return (
+                        <option key={item.id}>{item.name}</option>
+                    )
+                })
+            }
+        }
+        return(
+            <div className="modal fade" id="editStudentModal" tabIndex="-1" role="dialog"
+                 aria-labelledby="editStudentModalLabel" aria-hidden="true">
+                <div className="modal-dialog" role="document">
+                    <div className="modal-content">
+                        <form id="editStudent" onSubmit={this.editStudent}>
+                            <div className="modal-header bg-light">
+                                <h5 className="modal-title" id="editStudentModalLabel">Изменение
+                                    студента</h5>
+                                <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div className="modal-body">
+                                <div className="form-group">
+                                    <input className="form-control" type="text" name="value"
+                                           id="editStudentSurname"
+                                           placeholder="Введите фамилию студента"/>
+                                </div>
+                                <div className="form-group">
+                                    <input className="form-control" type="text" name="name"
+                                           id="editStudentFirstname"
+                                           placeholder="Введите имя студента"/>
+                                </div>
+                                <div className="form-group">
+                                    <input className="form-control" type="text"
+                                           name="name"
+                                           id="editStudentMiddlename"
+                                           placeholder="Введите отчество студента"/>
+                                </div>
+                                <div className="form-group">
+                                    <input className="form-control" type="text" name="name"
+                                           id="editStudentLogin"
+                                           placeholder="Введите логин студента"/>
+                                </div>
+                                <div className="form-group">
+                                    <input className="form-control" type="text" name="name"
+                                           id="editStudentPassword"
+                                           placeholder="Введите пароль студента"/>
+                                </div>
+                                <div className="form-group">
+                                    <input className="form-control" type="text" name="name"
+                                           id="editStudentDeviceUid"
+                                           placeholder="Введите deviceUid студента"/>
+                                </div>
+                                {
+                                    (itemGroup.length) ?
+                                        <select className="form-control selectpicker btn-outline-primary " onClick={this.selectGroupStudent}>
+                                            {itemGroup}
+                                        </select>
+                                        :
+                                        <label htmlFor="editStudentNull">Тут пусто!</label>
+                                }
+                            </div>
+                            <div className="modal-footer">
+                                <button type="submit" className="btn btn-outline-primary">Подтвердить</button>
                                 <button type="button" className="btn btn-outline-secondary"
                                         data-dismiss="modal">Отмена
                                 </button>
@@ -324,7 +449,7 @@ class DeletePopup extends Component{
             console.log("Cтудент удален \n", data);
             this.props.reloadListStudent();
         }).catch(function (error) {
-            console.log('DELETE discipline failed /n', error.message)
+            console.log('Cтудент not delete \n', error.message)
         });
     };
     render(){
@@ -352,49 +477,5 @@ class DeletePopup extends Component{
         )
     }
 }
-class EditPopup extends Component{
-    deleteStudent = event => {
-        event.preventDefault();
-        let id = localStorage.getItem('id');
-        fetch(`${BASE_PATH}${STUDENT_PATH}` + '/' + id, {
-            method: "DELETE",
-            headers: {
-                "api-token": localStorage.getItem('token'),
-            },
-        }).then(function (response) {
-            return response.json()
-        }).then(data => {
-            $('#deleteStudentModal').modal('toggle');
-            localStorage.setItem('id', '');
-            console.log("Cтудент удален \n", data);
-            this.props.reloadListStudent();
-        }).catch(function (error) {
-            console.log('DELETE discipline failed /n', error.message)
-        });
-    };
-    render(){
-        return(
-            <div className="modal fade" id="deleteStudentModal" tabIndex="-1" role="dialog"
-                 aria-labelledby="deleteStudentModalLabel" aria-hidden="true">
-                <div className="modal-dialog" role="document">
-                    <div className="modal-content">
-                        <form id="deleteStudent" onSubmit={this.deleteStudent}>
-                            <div className="modal-header bg-light">
-                                <h5 className="modal-title" id="deleteStudentModalLabel">Вы уверены, что хотите
-                                    удалить студента?</h5>
-                                <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div className="modal-footer">
-                                <button type="submit" className="btn btn-outline-primary" >Удалить</button>
-                                <button type="button" className="btn btn-outline-secondary" data-dismiss="modal">Отмена</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        )
-    }
-}
+
 
