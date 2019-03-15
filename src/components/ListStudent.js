@@ -27,8 +27,8 @@ export class ListStudent extends Component {
         let itemStudent = store.getState().list_student;
         if (!!itemStudent) {
             if (itemStudent.length){
-                let idSub = localStorage.getItem('idSub');
-                if (idSub == ''){
+                let setGroup = localStorage.getItem('setGroup');
+                if (setGroup == ''){
                     itemStudent = itemStudent.map(function (item) {
                         return (
                             <li className="list-group-item" key={item.id}>
@@ -53,17 +53,37 @@ export class ListStudent extends Component {
                 }else{
                     let filterItemStudent = [];
                     itemStudent.forEach(function(item) {
-                        if (item.group_id == idSub)
+                        if (item.group_id == setGroup)
                             filterItemStudent.push(item);
                     });
-                    console.log(filterItemStudent);
+                    itemStudent = filterItemStudent.map(function (item) {
+                        return (
+                            <li className="list-group-item" key={item.id}>
+                                <div className="row">
+                                    <div className="col text-left name-group">
+                                        {item.surname} {item.firstname} {item.middlename}
+                                    </div>
+                                    <div className="col text-left name-group">
+                                        <p className="text-primary d-inline">login:</p>
+                                        <p className="d-inline"> {item.login} </p>
+                                        <p className="text-primary d-inline">device_uid:</p>
+                                        <p className="d-inline"> {item.device_uid} </p>
+                                    </div>
+                                    <div className="col text-right">
+                                        <EditButton item = {item}/>
+                                        <DelButton item = {item}/>
+                                    </div>
+                                </div>
+                            </li>
+                        )
+                    })
                 }
-            } else{
+            }
+            if (itemStudent.length == 0)
                 itemStudent =
                     <div className="row list-group-item" key="-1">
-                        <div className="col text-center">Студентов нет!</div>
+                        <div className="col text-center">Тут пусто...</div>
                     </div>
-            }
         }
         return (
             <Fragment>
@@ -101,7 +121,6 @@ export class ListStudent extends Component {
         )
     }
 }
-
 class ButtonGroupVertical extends Component{
     loadListGroup =()=>{
         fetch(`${BASE_PATH}${GROUP_PATH}`, {
@@ -135,16 +154,18 @@ class ButtonGroupVertical extends Component{
     componentDidMount() {
         this.loadListGroup();
     };
-    setFilterStudent = () =>{
-        this.props.reloadListStudent();
-    }
     render(){
         let itemGroup = store.getState().list_group;
         if (!!itemGroup) {
             if (itemGroup.length){
-                itemGroup = itemGroup.map(function (item, i) {
+                // itemGroup = itemGroup.map(function (item, i) {
+                //     return (
+                //         <GroupButton item = {item} key ={i}/>
+                //     )
+                // })
+                itemGroup = itemGroup.map((item, i) => {
                     return (
-                        <GroupButton item = {item} key ={i}/>
+                        <GroupButton item = {item} setFilterStudent={this.props.reloadListStudent} key ={i}/>
                     )
                 })
             } else{
@@ -174,8 +195,8 @@ class ButtonGroupVertical extends Component{
 }
 class GroupButton extends Component{
     setGroup = () =>{
-        localStorage.setItem('idSub', this.props.item.id);
-        // this.props.setFilterStudent()
+        localStorage.setItem('setGroup', this.props.item.id);
+        this.props.setFilterStudent()
     };
     render(){
         return(
@@ -512,4 +533,6 @@ class DeletePopup extends Component{
     }
 }
 
-
+/*
+сделать разделение на курсы
+ */

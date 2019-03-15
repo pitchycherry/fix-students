@@ -108,3 +108,6 @@ class EditButton extends Component{
         )
     }
 }
+/*
+перевести на реакт и поправить кнопку
+ */
