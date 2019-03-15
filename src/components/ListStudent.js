@@ -3,9 +3,10 @@ import 'font-awesome/css/font-awesome.min.css';
 import {store} from "../index";
 import {getListGroup, getListStudent, setIsLoadinglistStudent, setIsLoadinglistGroup} from "../store/actions/actions";
 import {BASE_PATH, STUDENT_PATH, GROUP_PATH} from "./App";
+import $ from "jquery";
 
 export class ListStudent extends Component {
-    LoadListStudent =()=>{
+    loadListStudent =()=>{
         fetch(`${BASE_PATH}${STUDENT_PATH}`,{
             method: "GET",
             headers:{"api-token": localStorage.getItem('token')}
@@ -20,7 +21,7 @@ export class ListStudent extends Component {
         });
     };
     componentDidMount() {
-        this.LoadListStudent();
+        this.loadListStudent();
     }
     render() {
         let itemStudent = store.getState().list_student;
@@ -40,8 +41,8 @@ export class ListStudent extends Component {
                                     <p className="d-inline"> {item.device_uid} </p>
                                 </div>
                                 <div className="col text-right">
-                                    <EditButton/>
-                                    <DelButton/>
+                                    <EditButton item = {item}/>
+                                    <DelButton item = {item}/>
                                 </div>
                             </div>
                         </li>
@@ -56,6 +57,7 @@ export class ListStudent extends Component {
         }
         return (
             <Fragment>
+                <DeletePopup reloadListStudent = {this.loadListStudent}/>
                 <div className="container-fluid">
                     <div className="row justify-content-center">
                         <div className="control-teacher col-2">
@@ -146,12 +148,12 @@ class ButtonGroupVertical extends Component{
     }
 }
 class EditButton extends Component{
-    EditItem = () => {
-        // localStorage.setItem('EditItemId', this.props.item.id);
+    setDelId = event => {
+        localStorage.setItem('id', this.props.item.id);
     };
     render(){
         return(
-            <button type="button" className="btn" data-toggle="modal"
+            <button onClick={this.setDelId} type="button" className="btn" data-toggle="modal"
                     data-target="#editStudentModal">
                 <i className="fas fa-pencil-alt"></i>
             </button>
@@ -159,16 +161,61 @@ class EditButton extends Component{
     }
 }
 class DelButton extends Component{
-    delItem = () => {
-        // localStorage.setItem('DelItemId', this.props.item.id);
-        // localStorage.setItem('DelItemName', this.props.item.name);
+    setDelId = event => {
+        localStorage.setItem('id', this.props.item.id);
     };
     render(){
         return(
-            <button type="button" className="btn" data-toggle="modal"
+            <button onClick={this.setDelId} type="button" className="btn" data-toggle="modal"
                     data-target="#deleteStudentModal">
                 <i className="fas fa-trash-alt"></i>
             </button>
+        )
+    }
+}
+
+class DeletePopup extends Component{
+    deleteStudent = event => {
+        event.preventDefault();
+        let id = localStorage.getItem('id');
+        fetch(`${BASE_PATH}${STUDENT_PATH}` + '/' + id, {
+            method: "DELETE",
+            headers: {
+                "api-token": localStorage.getItem('token'),
+            },
+        }).then(function (response) {
+            return response.json()
+        }).then(data => {
+            $('#deleteStudentModal').modal('toggle');
+            localStorage.setItem('id', '');
+            console.log("Cтудент удален \n", data);
+            this.props.reloadListStudent();
+        }).catch(function (error) {
+            console.log('DELETE discipline failed /n', error.message)
+        });
+    };
+    render(){
+        return(
+            <div className="modal fade" id="deleteStudentModal" tabIndex="-1" role="dialog"
+                 aria-labelledby="deleteStudentModalLabel" aria-hidden="true">
+                <div className="modal-dialog" role="document">
+                    <div className="modal-content">
+                        <form id="deleteStudent" onSubmit={this.deleteStudent}>
+                            <div className="modal-header bg-light">
+                                <h5 className="modal-title" id="deleteStudentModalLabel">Вы уверены, что хотите
+                                    удалить студента?</h5>
+                                <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div className="modal-footer">
+                                <button type="submit" className="btn btn-outline-primary" >Удалить</button>
+                                <button type="button" className="btn btn-outline-secondary" data-dismiss="modal">Отмена</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
         )
     }
 }
