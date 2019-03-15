@@ -1,54 +1,54 @@
 import React, {Component, Fragment} from "react";
 import 'font-awesome/css/font-awesome.min.css';
+import {store} from "../index";
+import {getListGroup, getListStudent, setIsLoading} from "../store/actions/actions";
+import {BASE_PATH, STUDENT_PATH, GROUP_PATH} from "./App";
 
 export class ListStudent extends Component {
-    state = {
-        arrStudent: null,
-        isLoading: false,
-    };
     LoadListStudent =()=>{
-        console.log("LoadListGroup...");
-        fetch('http://nstu-tracker.thematrix.su/student',{
+        fetch(`${BASE_PATH}${STUDENT_PATH}`,{
             method: "GET",
             headers:{"api-token": localStorage.getItem('token')}
         }).then(function (response) {
             return response.json()
         }).then(data =>{
-            this.setState({isLoading:false, arrStudent: data.data});
+            store.dispatch(getListStudent(data));
+            store.dispatch(setIsLoading(false));
+            console.log("Список студентов получен \n", data);
         }).catch(function(error) {
-            console.log('GET findAllStudent failed /n', error.message)
+            console.log('Список студентов не получен \n', error.message);
         });
     };
     componentDidMount() {
-        this.setState({isLoading:true});
         this.LoadListStudent();
     }
     render() {
-        const {arrStudent, isLoading} = this.state;
-        let ItemStudent;
-        if (!!arrStudent) {
-            if (arrStudent.length){
-                ItemStudent = arrStudent.map(function (item) {
+        let itemStudent = store.getState().list_student;
+        if (!!itemStudent) {
+            if (itemStudent.length){
+                itemStudent = itemStudent.map(function (item) {
                     return (
                         <li className="list-group-item" key={item.id}>
                             <div className="row">
-                                <div className="col text-left name-group">{item.name}</div>
+                                <div className="col text-left name-group">
+                                    {item.surname} {item.firstname} {item.middlename}
+                                 </div>
+                                <div className="col text-left name-group">
+                                    <p className="text-primary d-inline">login:</p>
+                                    <p className="d-inline"> {item.login} </p>
+                                    <p className="text-primary d-inline">device_uid:</p>
+                                    <p className="d-inline"> {item.device_uid} </p>
+                                </div>
                                 <div className="col text-right">
-                                    <button type="button" className="btn" data-toggle="modal"
-                                            data-target="#editTeacherModal">
-                                        <i className="fas fa-pencil-alt"></i>
-                                    </button>
-                                    <button type="button" className="btn" data-toggle="modal"
-                                            data-target="#deleteTeacherModal">
-                                        <i className="fas fa-trash-alt"></i>
-                                    </button>
+                                    <EditButton/>
+                                    <DelButton/>
                                 </div>
                             </div>
                         </li>
                     )
                 })
             } else{
-                ItemStudent =
+                itemStudent =
                     <div className="row list-group-item" key="-1">
                         <div className="col text-center">Студентов нет!</div>
                     </div>
@@ -70,14 +70,14 @@ export class ListStudent extends Component {
                             </div>
                             <ul className="list-group list-group-flush">
                                 {
-                                    isLoading ?
+                                    (store.getState().isLoading_listStudent) ?
                                         <li className="list-group-item" key="-1">
                                             <div className="row">
                                                 <div className="col text-center name-group">Загружаю...</div>
                                             </div>
                                         </li>
                                         :
-                                        ItemStudent
+                                        itemStudent
                                 }
                             </ul>
                         </div>
@@ -87,23 +87,32 @@ export class ListStudent extends Component {
         )
     }
 }
-
 class ButtonGroupVertical extends Component{
     state = {
         arrGroup: null,
         isLoading: false,
     };
     LoadListGroup =()=>{
-        console.log("LoadListGroup...");
-        fetch('http://nstu-tracker.thematrix.su/group',{
+        // fetch('http://nstu-tracker.thematrix.su/group',{
+        //     method: "GET",
+        //     headers:{"api-token": localStorage.getItem('token')}
+        // }).then(function (response) {
+        //     return response.json()
+        // }).then(data =>{
+        //     this.setState({isLoading:false, arrGroup: data.data});
+        // }).catch(function(error) {
+        //     console.log('GET findAllGroup failed /n', error.message)
+        // });
+        fetch(`${BASE_PATH}${GROUP_PATH}`, {
             method: "GET",
-            headers:{"api-token": localStorage.getItem('token')}
+            headers: {"api-token": localStorage.getItem('token')}
         }).then(function (response) {
             return response.json()
-        }).then(data =>{
-            this.setState({isLoading:false, arrGroup: data.data});
-        }).catch(function(error) {
-            console.log('GET findAllGroup failed /n', error.message)
+        }).then(data => {
+            store.dispatch(getListGroup(data));
+            console.log("Список групп получен", data);
+        }).catch(function (error) {
+            console.log('Список групп не получен', error.message)
         });
     };
     componentDidMount() {
@@ -138,6 +147,33 @@ class ButtonGroupVertical extends Component{
                         GroupList
                 }
             </div>
+        )
+    }
+}
+class EditButton extends Component{
+    EditItem = () => {
+        // localStorage.setItem('EditItemId', this.props.item.id);
+    };
+    render(){
+        return(
+            <button type="button" className="btn" data-toggle="modal"
+                    data-target="#editStudentModal">
+                <i className="fas fa-pencil-alt"></i>
+            </button>
+        )
+    }
+}
+class DelButton extends Component{
+    delItem = () => {
+        // localStorage.setItem('DelItemId', this.props.item.id);
+        // localStorage.setItem('DelItemName', this.props.item.name);
+    };
+    render(){
+        return(
+            <button type="button" className="btn" data-toggle="modal"
+                    data-target="#deleteStudentModal">
+                <i className="fas fa-trash-alt"></i>
+            </button>
         )
     }
 }

@@ -1,7 +1,26 @@
+import {ListStudent} from "../../components/ListStudent";
+
 const initialState = {
     list_group: [],
     list_professor: [],
     current_group: {id: 0, name: ""},
+
+    //для дисциплин
+    list_discipline:[],
+    isLoading_discipline:false,
+
+    //для студентов
+    list_student: [],
+    isLoading_listStudent: true,
+    student:{
+        login: "--",
+        firstname: "--",
+        surname: "--",
+        middlename: "--",
+        plainPassword: "--",
+        deviceUid: "--",
+        groupId: "--",
+    },
 
 };
 export default (state = initialState, action) => {
@@ -57,6 +76,18 @@ export default (state = initialState, action) => {
         case "SET_CURRENT_PROFESSOR_PASSWORD":
             return {
                 ...state, current_professor_password: action.current_professor_password
+            };
+
+            //студенты
+        case "GET_LIST-STUDENT":
+            return {
+                ...state, list_student: action.list_student.data.map(group => {
+                    return group;
+                })
+            };
+        case "SET_ISLOADING":
+            return {
+                ...state, isLoading_listStudent: action.isLoading_listStudent
             };
         default:
             return state;

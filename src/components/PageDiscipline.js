@@ -1,6 +1,6 @@
 import React, {Component, Fragment} from "react";
 import {Header} from "./Header";
-
+import {store} from "../index";
 import {PageDisciplinePopup} from "./PageDisciplinePopup";
 import {ListDiscipline} from "./ListDiscipline";
 
@@ -10,7 +10,7 @@ export class PageDiscipline extends Component {
             <Fragment>
                 <Header/>
                 <PageDisciplinePopup/>
-                <ListDiscipline/>
+                <ListDiscipline store={store}/>
             </Fragment>
         )
     }

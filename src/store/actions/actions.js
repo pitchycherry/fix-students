@@ -45,3 +45,13 @@ export const setCurrentProfessorPassword = (password) => ({
     type: "SET_CURRENT_PROFESSOR_PASSWORD",
     current_professor_password: password
 });
+
+//cтуденты
+export const getListStudent = (list_student) => ({
+    type: "GET_LIST-STUDENT",
+    list_student: list_student
+});
+export const setIsLoading = (state) => ({
+    type: "SET_ISLOADING",
+    isLoading_listStudent: state
+});

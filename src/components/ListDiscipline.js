@@ -1,5 +1,7 @@
 import React, {Component, Fragment} from "react";
 import 'font-awesome/css/font-awesome.min.css';
+import {store} from "../index";
+// import {getListGroup, setCurrentGroup} from "../store/actions/actions";
 
 export class ListDiscipline extends Component {
     state = {
