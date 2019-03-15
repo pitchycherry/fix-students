@@ -51,7 +51,11 @@ export const getListStudent = (list_student) => ({
     type: "GET_LIST-STUDENT",
     list_student: list_student
 });
-export const setIsLoading = (state) => ({
-    type: "SET_ISLOADING",
+export const setIsLoadinglistStudent = (state) => ({
+    type: "SET_ISLOADING_LISTSTUDENT",
     isLoading_listStudent: state
+});
+export const setIsLoadinglistGroup = (state) => ({
+    type: "SET_ISLOADING_LISTSGROUP",
+    isLoading_listGroup: state
 });

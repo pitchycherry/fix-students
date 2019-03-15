@@ -12,6 +12,7 @@ const initialState = {
     //для студентов
     list_student: [],
     isLoading_listStudent: true,
+    isLoading_listGroup: true,
     student:{
         login: "--",
         firstname: "--",
@@ -85,9 +86,13 @@ export default (state = initialState, action) => {
                     return group;
                 })
             };
-        case "SET_ISLOADING":
+        case "SET_ISLOADING_LISTSTUDENT":
             return {
                 ...state, isLoading_listStudent: action.isLoading_listStudent
+            };
+        case "SET_ISLOADING_LISTSGROUP":
+            return {
+                ...state, isLoading_listGroup: action.isLoading_listGroup
             };
         default:
             return state;

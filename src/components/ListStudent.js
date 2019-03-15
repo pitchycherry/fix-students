@@ -1,7 +1,7 @@
 import React, {Component, Fragment} from "react";
 import 'font-awesome/css/font-awesome.min.css';
 import {store} from "../index";
-import {getListGroup, getListStudent, setIsLoading} from "../store/actions/actions";
+import {getListGroup, getListStudent, setIsLoadinglistStudent, setIsLoadinglistGroup} from "../store/actions/actions";
 import {BASE_PATH, STUDENT_PATH, GROUP_PATH} from "./App";
 
 export class ListStudent extends Component {
@@ -13,7 +13,7 @@ export class ListStudent extends Component {
             return response.json()
         }).then(data =>{
             store.dispatch(getListStudent(data));
-            store.dispatch(setIsLoading(false));
+            store.dispatch(setIsLoadinglistStudent(false));
             console.log("Список студентов получен \n", data);
         }).catch(function(error) {
             console.log('Список студентов не получен \n', error.message);
@@ -88,11 +88,7 @@ export class ListStudent extends Component {
     }
 }
 class ButtonGroupVertical extends Component{
-    state = {
-        arrGroup: null,
-        isLoading: false,
-    };
-    LoadListGroup =()=>{
+    loadListGroup =()=>{
         // fetch('http://nstu-tracker.thematrix.su/group',{
         //     method: "GET",
         //     headers:{"api-token": localStorage.getItem('token')}
@@ -110,27 +106,26 @@ class ButtonGroupVertical extends Component{
             return response.json()
         }).then(data => {
             store.dispatch(getListGroup(data));
-            console.log("Список групп получен", data);
+            store.dispatch(setIsLoadinglistGroup(false));
+            console.log("Список групп получен \n", data);
         }).catch(function (error) {
-            console.log('Список групп не получен', error.message)
+            console.log('Список групп не получен  \n', error.message)
         });
     };
     componentDidMount() {
-        this.setState({isLoading:true});
-        this.LoadListGroup();
+        this.loadListGroup();
     }
     render(){
-        const {arrGroup, isLoading} = this.state;
-        let GroupList;
-        if (!!arrGroup) {
-            if (arrGroup.length){
-                GroupList = arrGroup.map(function (item) {
+        let itemGroup = store.getState().list_group;
+        if (!!itemGroup) {
+            if (itemGroup.length){
+                itemGroup = itemGroup.map(function (item) {
                     return (
                         <button type="button" className="btn btn-outline-primary btn-block maxHRadioButton" key={item.id}>{item.name}</button>
                     )
                 })
             } else{
-                GroupList =
+                itemGroup =
                     <div className="row list-group-item" key="-1">
                         <div className="col text-center">Групп нет!</div>
                     </div>
@@ -139,12 +134,12 @@ class ButtonGroupVertical extends Component{
         return(
             <div className="btn-group-vertical col-sm">
                 {
-                    isLoading ?
+                    (store.getState().isLoading_listGroup) ?
                         <div className="row list-group-item" key="-1">
                             <div className="col text-center">Загружаю...</div>
                         </div>
                         :
-                        GroupList
+                        itemGroup
                 }
             </div>
         )
