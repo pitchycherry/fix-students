@@ -3,6 +3,7 @@ import 'font-awesome/css/font-awesome.min.css';
 import {BASE_PATH, PROFESSOR_PATH} from "./App";
 import {store} from "../index";
 import {
+    getListDiscipline,
     getListProfessor,
     setCurrentProfessorFirstname,
     setCurrentProfessorId,
@@ -22,7 +23,19 @@ export class ListProfessor extends Component {
         store.dispatch(setCurrentProfessorLogin(login));
         store.dispatch(setCurrentProfessorPassword(password));
     };
-
+    loadListDiscipline = () =>{
+        fetch('http://nstu-tracker.thematrix.su/discipline',{
+            method: "GET",
+            headers:{"api-token": localStorage.getItem('token')}
+        }).then(function (response) {
+            return response.json()
+        }).then(data =>{
+            store.dispatch(getListDiscipline(data));
+            console.log("Список дисциплин получен", data);
+        }).catch(function(error) {
+            console.log('GET findAll failed', error.message)
+        });
+    };
     componentDidMount() {
         fetch(`${BASE_PATH}${PROFESSOR_PATH}`, {
             method: "GET",
@@ -49,7 +62,7 @@ export class ListProfessor extends Component {
                                 data-target="#addProfessorModal">Добавить преподавателя
                         </button>
                         <button type="button" className="btn btn-outline-primary btn-block" data-toggle="modal"
-                                data-target="#addProfessorInDisciplineModal">Добавить преподавателя в дисциплину
+                                data-target="#addProfessorInDisciplineModal" onClick={this.loadListDiscipline}>Добавить преподавателя в дисциплину
                         </button>
                     </div>
 

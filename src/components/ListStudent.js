@@ -20,6 +20,7 @@ export class ListStudent extends Component {
             console.log('Список студентов не получен \n', error.message);
         });
     };
+
     componentDidMount() {
         this.loadListStudent();
     }

@@ -93,7 +93,18 @@ export class PageProfessorPopup extends Component {
                 console.log("Преподаватель не изменен");
             });
     };
-
+    handleChangeSelectProfessor = event => {
+        event.preventDefault();
+        console.log(event.target.value);
+    };
+    handleChangeSelectDiscipline = event => {
+        event.preventDefault();
+        console.log(event.target.value);
+    };
+    handleSubmitAddProfessorInDiscipline = event => {
+        event.preventDefault();
+        console.log("Submit add Professor in discipline");
+    };
     render() {
         return (
             <Fragment>
@@ -239,7 +250,7 @@ export class PageProfessorPopup extends Component {
                      aria-labelledby="addProfessorInDisciplineModal" aria-hidden="true">
                     <div className="modal-dialog" role="document">
                         <div className="modal-content">
-                            <form id="addProfessorInDiscipline" onSubmit={this.handleSubmitAddProfessor}>
+                            <form id="addProfessorInDiscipline" onSubmit={this.handleSubmitAddProfessorInDiscipline}>
                                 <div className="modal-header bg-light">
                                     <h5 className="modal-title" id="addProfessorInDisciplineModalLabel">Добавление
                                         преподавателя в дисциплину</h5>
@@ -251,7 +262,7 @@ export class PageProfessorPopup extends Component {
                                     <div className="form-group">
                                         <label htmlFor="addProfessor">Преподаватель</label>
                                         <select className="form-control" id="addProfessor"
-                                                onChange={this.handleChangeSurname}>
+                                                onChange={this.handleChangeSelectProfessor}>
                                             {Object.values(store.getState().list_professor).map(professor =>
                                                 <option key={professor.id}>
                                                     {professor.surname} {professor.firstname} {professor.middlename}
@@ -262,10 +273,10 @@ export class PageProfessorPopup extends Component {
                                     <div className="form-group">
                                         <label htmlFor="addDiscipline">Дисциплина</label>
                                         <select className="form-control" id="addDiscipline"
-                                                onChange={this.handleChangeSurname}>
-                                            {Object.values(store.getState().list_professor).map(discipline =>
+                                                onChange={this.handleChangeSelectDiscipline}>
+                                            {Object.values(store.getState().list_discipline).map(discipline =>
                                                 <option key={discipline.id}>
-                                                    {"ДОДЕЛАТЬ!!"}
+                                                    {discipline.name}
                                                 </option>
                                             )}
                                         </select>
