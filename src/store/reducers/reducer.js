@@ -1,5 +1,3 @@
-import {ListStudent} from "../../components/ListStudent";
-
 const initialState = {
     list_group: [],
     list_professor: [],
@@ -13,16 +11,6 @@ const initialState = {
     list_student: [],
     isLoading_listStudent: true,
     isLoading_listGroup: true,
-    student:{
-        login: "--",
-        firstname: "--",
-        surname: "--",
-        middlename: "--",
-        plainPassword: "--",
-        deviceUid: "--",
-        groupId: "--",
-    },
-
 };
 export default (state = initialState, action) => {
     switch (action.type) {
