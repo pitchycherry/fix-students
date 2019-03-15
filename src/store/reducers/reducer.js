@@ -11,6 +11,7 @@ const initialState = {
     list_student: [],
     isLoading_listStudent: true,
     isLoading_listGroup: true,
+    select_group: -1,
 };
 export default (state = initialState, action) => {
     switch (action.type) {
@@ -81,6 +82,10 @@ export default (state = initialState, action) => {
         case "SET_ISLOADING_LISTSGROUP":
             return {
                 ...state, isLoading_listGroup: action.isLoading_listGroup
+            };
+        case "SET_SELECT_GROUP":
+            return {
+                ...state, select_group: action.select_group
             };
 
         // для дисциплин

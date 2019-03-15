@@ -1,7 +1,7 @@
 import React, {Component, Fragment} from "react";
 import 'font-awesome/css/font-awesome.min.css';
 import {store} from "../index";
-import {getListGroup, getListStudent, setIsLoadinglistStudent, setIsLoadinglistGroup} from "../store/actions/actions";
+import {getListGroup, getListStudent, setIsLoadinglistStudent, setIsLoadinglistGroup, setSelectGroup} from "../store/actions/actions";
 import {BASE_PATH, STUDENT_PATH, GROUP_PATH} from "./App";
 import $ from "jquery";
 
@@ -28,8 +28,9 @@ export class ListStudent extends Component {
         let itemStudent = store.getState().list_student;
         if (!!itemStudent) {
             if (itemStudent.length){
-                let setGroup = localStorage.getItem('setGroup');
-                if (setGroup == ''){
+                let setGroup = store.getState().select_group;
+                // eslint-disable-next-line
+                if (setGroup == -1){
                     itemStudent = itemStudent.map(function (item) {
                         return (
                             <li className="list-group-item" key={item.id}>
@@ -54,10 +55,13 @@ export class ListStudent extends Component {
                 }else{
                     let filterItemStudent = [];
                     itemStudent.forEach(function(item) {
+                        // eslint-disable-next-line
                         if (item.group_id == setGroup)
                             filterItemStudent.push(item);
                     });
+                    // eslint-disable-next-line
                     itemStudent = filterItemStudent.map(function (item) {
+                        // eslint-disable-next-line
                         return (
                             <li className="list-group-item" key={item.id}>
                                 <div className="row">
@@ -80,6 +84,7 @@ export class ListStudent extends Component {
                     })
                 }
             }
+            // eslint-disable-next-line
             if (itemStudent.length == 0)
                 itemStudent =
                     <div className="row list-group-item" key="-1">
@@ -146,8 +151,6 @@ class ButtonGroupVertical extends Component{
         }).then(data => {
             store.dispatch(getListGroup(data));
             console.log("Список групп получен \n", data);
-            if ((store.getState().list_group).length)
-                localStorage.setItem('id', (store.getState().list_group)[0].id);
         }).catch(function (error) {
             console.log('Список групп не получен  \n', error.message)
         });
@@ -159,11 +162,11 @@ class ButtonGroupVertical extends Component{
         let itemGroup = store.getState().list_group;
         if (!!itemGroup) {
             if (itemGroup.length){
-                // itemGroup = itemGroup.map(function (item, i) {
-                //     return (
-                //         <GroupButton item = {item} key ={i}/>
-                //     )
-                // })
+                itemGroup.sort(function(a, b){
+                    if(a.name < b.name) { return -1; }
+                    if(a.name > b.name) { return 1; }
+                    return 0;
+                });
                 itemGroup = itemGroup.map((item, i) => {
                     return (
                         <GroupButton item = {item} setFilterStudent={this.props.reloadListStudent} key ={i}/>
@@ -196,7 +199,7 @@ class ButtonGroupVertical extends Component{
 }
 class GroupButton extends Component{
     setGroup = () =>{
-        localStorage.setItem('setGroup', this.props.item.id);
+        store.dispatch(setSelectGroup(this.props.item.id));
         this.props.setFilterStudent()
     };
     render(){
@@ -273,6 +276,7 @@ class AddPopup extends Component{
     selectGroupStudent = event => {
         let tmpArr = store.getState().list_group;
         for (let i = 0; i < tmpArr.length; ++i) {
+            // eslint-disable-next-line
             if (tmpArr[i].name == event.currentTarget.value){
                 localStorage.setItem('id', tmpArr[i].id);
                 break;
@@ -337,7 +341,7 @@ class AddPopup extends Component{
                                 </div>
                                 {
                                     (itemGroup.length) ?
-                                        <select className="form-control selectpicker btn-outline-primary " onClick={this.selectGroupStudent}>
+                                        <select className="form-control" onClick={this.selectGroupStudent}>
                                             {itemGroup}
                                         </select>
                                         :
@@ -369,8 +373,8 @@ class EditPopup extends Component{
         editStudent.append('plainPassword', document.getElementById("editStudentPassword").value);
         editStudent.append('deviceUid', document.getElementById("editStudentDeviceUid").value);
         editStudent.append('groupId', localStorage.getItem('id'));
-        let idStudent = localStorage.getItem('idSub');
-        fetch(`${BASE_PATH}${STUDENT_PATH}` + '/' + idStudent, {
+        let idStudent = ("/" + localStorage.getItem('idSub'));
+        fetch(`${BASE_PATH}${STUDENT_PATH}` + idStudent, {
             method: "PUT",
             headers: {
                 "api-token": localStorage.getItem('token'),
@@ -400,6 +404,7 @@ class EditPopup extends Component{
         let tmpArr = store.getState().list_group;
         if (tmpArr.length)
             for (let i = 0; i < tmpArr.length; ++i) {
+                // eslint-disable-next-line
                 if (tmpArr[i].name == event.currentTarget.value){
                     localStorage.setItem('id', tmpArr[i].id);
                     break;
@@ -488,8 +493,8 @@ class EditPopup extends Component{
 class DeletePopup extends Component{
     deleteStudent = event => {
         event.preventDefault();
-        let id = localStorage.getItem('id');
-        fetch(`${BASE_PATH}${STUDENT_PATH}` + '/' + id, {
+        let id = ("/" + localStorage.getItem('id'));
+        fetch(`${BASE_PATH}${STUDENT_PATH}` + id, {
             method: "DELETE",
             headers: {
                 "api-token": localStorage.getItem('token'),
@@ -533,7 +538,3 @@ class DeletePopup extends Component{
         )
     }
 }
-
-/*
-сделать разделение на курсы
- */

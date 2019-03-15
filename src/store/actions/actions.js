@@ -63,3 +63,7 @@ export const setIsLoadinglistGroup = (state) => ({
     type: "SET_ISLOADING_LISTSGROUP",
     isLoading_listGroup: state
 });
+export const setSelectGroup = (num) => ({
+    type: "SET_SELECT_GROUP",
+    select_group: num
+});
