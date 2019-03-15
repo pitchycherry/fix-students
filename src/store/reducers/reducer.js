@@ -82,7 +82,17 @@ export default (state = initialState, action) => {
             return {
                 ...state, isLoading_listGroup: action.isLoading_listGroup
             };
+
+        // для дисциплин
+        case "GET_LIST_DISCIPLINE":
+            return {
+                ...state, list_discipline: action.list_discipline.data.map(discipline => {
+                    return discipline;
+                })
+            };
         default:
             return state;
     }
 };
+
+

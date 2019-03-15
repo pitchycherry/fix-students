@@ -14,6 +14,10 @@ export const getListProfessor = (list_professor) => ({
     type: "GET_LIST-PROFESSOR",
     list_professor: list_professor
 });
+export const getListDiscipline = (list_discipline) => ({
+    type: "GET_LIST_DISCIPLINE",
+    list_discipline: list_discipline
+});
 export const setCurrentGroup = (id, name) => ({
     type: "SET_CURRENT_GROUP",
     current_group: {
