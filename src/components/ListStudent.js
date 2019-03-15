@@ -27,27 +27,37 @@ export class ListStudent extends Component {
         let itemStudent = store.getState().list_student;
         if (!!itemStudent) {
             if (itemStudent.length){
-                itemStudent = itemStudent.map(function (item) {
-                    return (
-                        <li className="list-group-item" key={item.id}>
-                            <div className="row">
-                                <div className="col text-left name-group">
-                                    {item.surname} {item.firstname} {item.middlename}
-                                 </div>
-                                <div className="col text-left name-group">
-                                    <p className="text-primary d-inline">login:</p>
-                                    <p className="d-inline"> {item.login} </p>
-                                    <p className="text-primary d-inline">device_uid:</p>
-                                    <p className="d-inline"> {item.device_uid} </p>
+                let idSub = localStorage.getItem('idSub');
+                if (idSub == ''){
+                    itemStudent = itemStudent.map(function (item) {
+                        return (
+                            <li className="list-group-item" key={item.id}>
+                                <div className="row">
+                                    <div className="col text-left name-group">
+                                        {item.surname} {item.firstname} {item.middlename}
+                                    </div>
+                                    <div className="col text-left name-group">
+                                        <p className="text-primary d-inline">login:</p>
+                                        <p className="d-inline"> {item.login} </p>
+                                        <p className="text-primary d-inline">device_uid:</p>
+                                        <p className="d-inline"> {item.device_uid} </p>
+                                    </div>
+                                    <div className="col text-right">
+                                        <EditButton item = {item}/>
+                                        <DelButton item = {item}/>
+                                    </div>
                                 </div>
-                                <div className="col text-right">
-                                    <EditButton item = {item}/>
-                                    <DelButton item = {item}/>
-                                </div>
-                            </div>
-                        </li>
-                    )
-                })
+                            </li>
+                        )
+                    })
+                }else{
+                    let filterItemStudent = [];
+                    itemStudent.forEach(function(item) {
+                        if (item.group_id == idSub)
+                            filterItemStudent.push(item);
+                    });
+                    console.log(filterItemStudent);
+                }
             } else{
                 itemStudent =
                     <div className="row list-group-item" key="-1">
@@ -66,7 +76,7 @@ export class ListStudent extends Component {
                             <div className="col text-center">
                                 <p className="classic-title">Группы</p>
                             </div>
-                            <ButtonGroupVertical/>
+                            <ButtonGroupVertical reloadListStudent = {this.loadListStudent}/>
                         </div>
                         <div className="list-teacher__body col-6">
                             <div className="col text-center">
@@ -91,6 +101,7 @@ export class ListStudent extends Component {
         )
     }
 }
+
 class ButtonGroupVertical extends Component{
     loadListGroup =()=>{
         fetch(`${BASE_PATH}${GROUP_PATH}`, {
@@ -123,14 +134,17 @@ class ButtonGroupVertical extends Component{
     };
     componentDidMount() {
         this.loadListGroup();
+    };
+    setFilterStudent = () =>{
+        this.props.reloadListStudent();
     }
     render(){
         let itemGroup = store.getState().list_group;
         if (!!itemGroup) {
             if (itemGroup.length){
-                itemGroup = itemGroup.map(function (item) {
+                itemGroup = itemGroup.map(function (item, i) {
                     return (
-                        <button type="button" className="btn btn-outline-primary btn-block maxHRadioButton" key={item.id}>{item.name}</button>
+                        <GroupButton item = {item} key ={i}/>
                     )
                 })
             } else{
@@ -158,6 +172,18 @@ class ButtonGroupVertical extends Component{
         )
     }
 }
+class GroupButton extends Component{
+    setGroup = () =>{
+        localStorage.setItem('idSub', this.props.item.id);
+        // this.props.setFilterStudent()
+    };
+    render(){
+        return(
+            <button onClick={this.setGroup} type="button" className="btn btn-outline-primary btn-block maxHRadioButton">{this.props.item.name}</button>
+        )
+    }
+}
+
 class EditButton extends Component{
     setEditId = () => {
         localStorage.setItem('idSub', this.props.item.id);
@@ -207,6 +233,7 @@ class AddPopup extends Component{
         }).then(data => {
             $('#addStudentModal').modal('toggle');
             localStorage.setItem('id', '');
+            localStorage.setItem('idSub', '');
             console.log("Cтудент добавлен \n", data);
             this.props.reloadListStudent();
         }).catch(function (error) {
@@ -218,6 +245,8 @@ class AddPopup extends Component{
         document.getElementById("addStudentLogin").value = '';
         document.getElementById("addStudentPassword").value = '';
         document.getElementById("addStudentDeviceUid").value = '';
+        localStorage.setItem('id', '');
+        localStorage.setItem('idSub', '');
     };
     selectGroupStudent = event => {
         let tmpArr = store.getState().list_group;
@@ -342,6 +371,8 @@ class EditPopup extends Component{
         document.getElementById("editStudentLogin").value = '';
         document.getElementById("editStudentPassword").value = '';
         document.getElementById("editStudentDeviceUid").value = '';
+        localStorage.setItem('id', '');
+        localStorage.setItem('idSub', '');
     };
     selectGroupStudent = event => {
         let tmpArr = store.getState().list_group;
@@ -446,11 +477,14 @@ class DeletePopup extends Component{
         }).then(data => {
             $('#deleteStudentModal').modal('toggle');
             localStorage.setItem('id', '');
+            localStorage.setItem('idSub', '');
             console.log("Cтудент удален \n", data);
             this.props.reloadListStudent();
         }).catch(function (error) {
             console.log('Cтудент not delete \n', error.message)
         });
+        localStorage.setItem('id', '');
+        localStorage.setItem('idSub', '');
     };
     render(){
         return(
