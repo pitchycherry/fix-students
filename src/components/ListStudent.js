@@ -150,6 +150,7 @@ class ButtonGroupVertical extends Component{
         }).then(data => {
             store.dispatch(getListGroup(data));
             console.log("Список групп получен \n", data);
+            if (data.data.length) localStorage.setItem('id', data.data[0].id);
         }).catch(function (error) {
             console.log('Список групп не получен  \n', error.message)
         });
@@ -161,11 +162,6 @@ class ButtonGroupVertical extends Component{
         let itemGroup = store.getState().list_group;
         if (!!itemGroup) {
             if (itemGroup.length){
-                itemGroup.sort(function(a, b){
-                    if(a.name < b.name) { return -1; }
-                    if(a.name > b.name) { return 1; }
-                    return 0;
-                });
                 itemGroup = itemGroup.map((item, i) => {
                     return (
                         <GroupButton item = {item} setFilterStudent={this.props.reloadListStudent} key ={i}/>
@@ -211,6 +207,7 @@ class GroupButton extends Component{
 class EditButton extends Component{
     setEditId = () => {
         localStorage.setItem('idSub', this.props.item.id);
+        localStorage.setItem('id', (store.getState().list_group)[0].id);
     };
     render(){
         return(
@@ -256,8 +253,6 @@ class AddPopup extends Component{
             return response.json()
         }).then(data => {
             $('#addStudentModal').modal('toggle');
-            localStorage.setItem('id', '');
-            localStorage.setItem('idSub', '');
             console.log("Cтудент добавлен \n", data);
             this.props.reloadListStudent();
         }).catch(function (error) {
@@ -281,6 +276,16 @@ class AddPopup extends Component{
                 break;
             }
         }
+    };
+    close = () =>{
+        document.getElementById("addStudentSurname").value = '';
+        document.getElementById("addStudentFirstname").value = '';
+        document.getElementById("addStudentMiddlename").value = '';
+        document.getElementById("addStudentLogin").value = '';
+        document.getElementById("addStudentPassword").value = '';
+        document.getElementById("addStudentDeviceUid").value = '';
+        localStorage.setItem('id', '');
+        localStorage.setItem('idSub', '');
     };
     render(){
         let itemGroup = store.getState().list_group;
@@ -350,7 +355,7 @@ class AddPopup extends Component{
                             <div className="modal-footer">
                                 <button type="submit" className="btn btn-outline-primary">Добавить</button>
                                 <button type="button" className="btn btn-outline-secondary"
-                                        data-dismiss="modal">Отмена
+                                        data-dismiss="modal" onClick={this.close}>Отмена
                                 </button>
                             </div>
 
@@ -409,6 +414,16 @@ class EditPopup extends Component{
                     break;
                 }
             }
+    };
+    close = () =>{
+        document.getElementById("editStudentSurname").value = '';
+        document.getElementById("editStudentFirstname").value = '';
+        document.getElementById("editStudentMiddlename").value = '';
+        document.getElementById("editStudentLogin").value = '';
+        document.getElementById("editStudentPassword").value = '';
+        document.getElementById("editStudentDeviceUid").value = '';
+        localStorage.setItem('id', '');
+        localStorage.setItem('idSub', '');
     };
     render(){
         let itemGroup = store.getState().list_group;
@@ -478,7 +493,7 @@ class EditPopup extends Component{
                             <div className="modal-footer">
                                 <button type="submit" className="btn btn-outline-primary">Подтвердить</button>
                                 <button type="button" className="btn btn-outline-secondary"
-                                        data-dismiss="modal">Отмена
+                                        data-dismiss="modal" onClick={this.close}>Отмена
                                 </button>
                             </div>
 
