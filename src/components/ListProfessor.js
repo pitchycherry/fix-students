@@ -29,7 +29,7 @@ export class ListProfessor extends Component {
             method: "GET",
             headers: {"api-token": localStorage.getItem('token')}
         }).then(function (response) {
-            if(response.status === 401) {
+            if (response.status === 401) {
                 document.location.href = "/";
             }
             return response.json()
@@ -47,7 +47,7 @@ export class ListProfessor extends Component {
             headers: {"api-token": localStorage.getItem('token')}
         }).then(function (response) {
             console.log(response.status);
-            if(response.status === 401) {
+            if (response.status === 401) {
                 document.location.href = "/";
             }
 
@@ -62,6 +62,7 @@ export class ListProfessor extends Component {
 
     componentDidMount() {
         this.loadListProfessor();
+        this.loadListDiscipline();
     }
 
     render() {
@@ -80,6 +81,10 @@ export class ListProfessor extends Component {
                                 data-target="#addProfessorInDisciplineModal" onClick={this.loadListDiscipline}>Добавить
                             преподавателя в дисциплину
                         </button>
+                        <button type="button" className="btn btn-outline-primary btn-block" data-toggle="modal"
+                                data-target="#deleteProfessorFromDisciplineModal" onClick={this.loadListDiscipline}>Удалить
+                            преподавателя из дисциплины
+                        </button>
                     </div>
 
                     <div className="list-teacher__body col-9">
@@ -90,8 +95,15 @@ export class ListProfessor extends Component {
                             {Object.values(store.getState().list_professor).map(professor =>
                                 <li key={professor.id} className="list-group-item">
                                     <div className="row">
+                                        {console.log(store.getState().list_discipline)}
                                         <div
-                                            className="col text-left name-group">{professor.surname} {professor.firstname} {professor.middlename}</div>
+                                            className="col text-left name-group">{professor.surname} {professor.firstname} {professor.middlename}
+                                            <br/><br/><b>Дисциплины преподавателя:</b>{professor.disciplines.map(id_discipline =>
+                                                <p key={id_discipline}>{store.getState().list_discipline.map(o => {
+                                                    return o.id === id_discipline ? o.name : null;
+                                                })}</p>
+                                            )}</div>
+
                                         <div className="col text-right">
                                             <button type="button" className="btn" data-toggle="modal"
                                                     data-target="#editProfessorModal"
