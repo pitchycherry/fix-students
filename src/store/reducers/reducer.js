@@ -5,7 +5,7 @@ const initialState = {
 
     //для дисциплин
     list_discipline:[],
-    isLoading_discipline:false,
+    isLoading_listDiscipline:true,
 
     //для студентов
     list_student: [],
@@ -94,6 +94,10 @@ export default (state = initialState, action) => {
                 ...state, list_discipline: action.list_discipline.data.map(discipline => {
                     return discipline;
                 })
+            };
+        case "SET_ISLOADING_LISTDISCIPLINE":
+            return {
+                ...state, isLoading_listDiscipline: action.isLoading_listDiscipline
             };
         default:
             return state;
