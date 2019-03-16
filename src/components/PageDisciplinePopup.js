@@ -13,6 +13,9 @@ export class PageDisciplinePopup extends Component{
             },
             body: newDiscipline
         }).then(function (response) {
+            if(response.status === 401) {
+                document.location.href = "/";
+            }
             return response.json()
         }).then(data => {
             $('#addDisciplineModal').modal('toggle');
@@ -36,6 +39,9 @@ export class PageDisciplinePopup extends Component{
             },
             body: delDiscipline
         }).then(function (response) {
+            if(response.status === 401) {
+                document.location.href = "/";
+            }
             return response.json()
         }).then(data => {
             $('#deleteDisciplineModal').modal('toggle');
@@ -58,6 +64,9 @@ export class PageDisciplinePopup extends Component{
             },
             body: new URLSearchParams({name: document.getElementById("editDisciplineNameLabel").value})
         }).then(function (response) {
+            if(response.status === 401) {
+                document.location.href = "/";
+            }
             return response;
         }).then(data => {
             $('#editDisciplineModal').modal('toggle');

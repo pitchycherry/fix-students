@@ -36,16 +36,20 @@ export class PageProfessorPopup extends Component {
             headers: {"api-token": localStorage.getItem('token')},
             body: current_professor
         }).then(function (response) {
+            if(response.status === 401) {
+                document.location.href = "/";
+            }
             return response.json()
         }).then(response => {
             $(function () {
                 $('#addProfessorModal').modal('toggle');
             });
             console.log(store.getState());
-            document.location.reload(true);
+            this.props.reloadListProfessor();
             console.log("Новый преподаватель добавлен", response);
         })
             .catch(() => {
+                $('[data-toggle="popover"]').popover();
                 console.log("Новый преподаватель не добавлен");
             });
     };
@@ -56,12 +60,15 @@ export class PageProfessorPopup extends Component {
             method: "DELETE",
             headers: {"api-token": localStorage.getItem('token')},
         }).then(function (response) {
+            if(response.status === 401) {
+                document.location.href = "/";
+            }
             return response.json()
         }).then(response => {
             $(function () {
                 $('#deleteProfessorModal').modal('toggle');
             });
-            document.location.reload(true);
+            this.props.reloadListProfessor();
             console.log("Преподаватель удален", response);
         })
             .catch(() => {
@@ -81,15 +88,19 @@ export class PageProfessorPopup extends Component {
             headers: {"api-token": localStorage.getItem('token')},
             body: new URLSearchParams(editProfessor)
         }).then(function (response) {
+            if(response.status === 401) {
+                document.location.href = "/";
+            }
             return response.json()
         }).then(response => {
             $(function () {
-                $('#editGroupModal').modal('toggle');
+                $('#editProfessorModal').modal('toggle');
             });
-            document.location.reload(true);
+            this.props.reloadListProfessor();
             console.log("Преподаватель изменен", response);
         })
             .catch(() => {
+                $('[data-toggle="popover"]').popover();
                 console.log("Преподаватель не изменен");
             });
     };
@@ -105,6 +116,7 @@ export class PageProfessorPopup extends Component {
         event.preventDefault();
         console.log("Submit add Professor in discipline");
     };
+
     render() {
         return (
             <Fragment>
@@ -127,40 +139,41 @@ export class PageProfessorPopup extends Component {
                                         <input className="form-control" type="text" name="value"
                                                id="addProfessorSurname"
                                                placeholder="Введите фамилию преподавателя"
-                                               onChange={this.handleChangeSurname}/>
+                                               onChange={this.handleChangeSurname} required="required"/>
                                     </div>
                                     <div className="form-group">
                                         <label htmlFor="addProfessorFirstname">Имя преподавателя</label>
                                         <input className="form-control" type="text" name="name"
                                                id="addProfessorFirstname"
                                                placeholder="Введите имя преподавателя"
-                                               onChange={this.handleChangeFirstname}/>
+                                               onChange={this.handleChangeFirstname} required="required"/>
                                     </div>
                                     <div className="form-group">
                                         <label htmlFor="addProfessorMiddlename">Отчество преподавателя</label>
                                         <input className="form-control" type="text" name="name"
                                                id="addProfessorMiddlename"
                                                placeholder="Введите отчество преподавателя"
-                                               onChange={this.handleChangeMiddlename}/>
+                                               onChange={this.handleChangeMiddlename} required="required"/>
                                     </div>
                                     <div className="form-group">
                                         <label htmlFor="addProfessorLogin">Логин преподавателя</label>
                                         <input className="form-control" type="text" name="name" id="addProfessorLogin"
                                                placeholder="Введите логин преподавателя"
-                                               onChange={this.handleChangeLogin}/>
+                                               onChange={this.handleChangeLogin} required="required"/>
                                     </div>
                                     <div className="form-group">
                                         <label htmlFor="addProfessorPassword">Пароль преподавателя</label>
                                         <input className="form-control" type="text" name="name"
                                                id="addProfessorPassword"
                                                placeholder="Введите пароль преподавателя"
-                                               onChange={this.handleChangePassword}/>
+                                               onChange={this.handleChangePassword} required="required"/>
                                     </div>
                                 </div>
                                 <div className="modal-footer">
                                     <button type="submit" className="btn btn-outline-primary">Добавить</button>
                                     <button type="button" className="btn btn-outline-secondary"
-                                            data-dismiss="modal">Отмена
+                                            data-dismiss="modal" data-toggle='popover'
+                                            title="Такой преподаватель уже существует">Отмена
                                     </button>
                                 </div>
                             </form>
@@ -238,7 +251,8 @@ export class PageProfessorPopup extends Component {
                                 <div className="modal-footer">
                                     <button type="submit" className="btn btn-outline-primary">Изменить</button>
                                     <button type="button" className="btn btn-outline-secondary"
-                                            data-dismiss="modal">Отмена
+                                            data-dismiss="modal" data-toggle='popover'
+                                            title="Такой преподаватель уже существует">Отмена
                                     </button>
                                 </div>
                             </form>

@@ -22,7 +22,7 @@ const render = function () {
                 <Switch>
                     <Route exact path='/' component={MainPage}/>
                     <Route path='/groups' component={PageGroup}/>
-                    <Route path='/teachers' component={PageProfessor}/>
+                    <Route path='/professors' component={PageProfessor}/>
                     <Route path='/disciplines' component={PageDiscipline}/>
                     <Route path='/students' component={PageStudent}/>
                 </Switch>

@@ -1,7 +1,5 @@
 import React, {Component, Fragment} from "react";
 import 'font-awesome/css/font-awesome.min.css';
-import {store} from "../index";
-// import {getListGroup, setCurrentGroup} from "../store/actions/actions";
 
 export class ListDiscipline extends Component {
     state = {
@@ -13,6 +11,9 @@ export class ListDiscipline extends Component {
             method: "GET",
             headers:{"api-token": localStorage.getItem('token')}
         }).then(function (response) {
+            if(response.status === 401) {
+                document.location.href = "/";
+            }
             return response.json()
         }).then(data =>{
             this.setState({isLoading:false, arr: data.data});
