@@ -1,10 +1,11 @@
 import React, {Component, Fragment} from 'react';
 import {store} from "../index";
 import {
-    setCurrentProfessorFirstname, setCurrentProfessorLogin,
+    setCurrentDisciplineId,
+    setCurrentProfessorFirstname, setCurrentProfessorId, setCurrentProfessorLogin,
     setCurrentProfessorMiddlename, setCurrentProfessorPassword, setCurrentProfessorSurname
 } from "../store/actions/actions";
-import {BASE_PATH, PROFESSOR_PATH} from "./App";
+import {BASE_PATH, DISCIPLINE_PATH, PROFESSOR_PATH} from "./App";
 import $ from "jquery";
 
 export class PageProfessorPopup extends Component {
@@ -36,7 +37,7 @@ export class PageProfessorPopup extends Component {
             headers: {"api-token": localStorage.getItem('token')},
             body: current_professor
         }).then(function (response) {
-            if(response.status === 401) {
+            if (response.status === 401) {
                 document.location.href = "/";
             }
             return response.json()
@@ -60,7 +61,7 @@ export class PageProfessorPopup extends Component {
             method: "DELETE",
             headers: {"api-token": localStorage.getItem('token')},
         }).then(function (response) {
-            if(response.status === 401) {
+            if (response.status === 401) {
                 document.location.href = "/";
             }
             return response.json()
@@ -88,7 +89,7 @@ export class PageProfessorPopup extends Component {
             headers: {"api-token": localStorage.getItem('token')},
             body: new URLSearchParams(editProfessor)
         }).then(function (response) {
-            if(response.status === 401) {
+            if (response.status === 401) {
                 document.location.href = "/";
             }
             return response.json()
@@ -106,15 +107,55 @@ export class PageProfessorPopup extends Component {
     };
     handleChangeSelectProfessor = event => {
         event.preventDefault();
-        console.log(event.target.value);
+        store.dispatch(setCurrentProfessorId(event.target.options[event.target.selectedIndex].value));
     };
     handleChangeSelectDiscipline = event => {
         event.preventDefault();
-        console.log(event.target.value);
+        store.dispatch(setCurrentDisciplineId(event.target.options[event.target.selectedIndex].value));
     };
     handleSubmitAddProfessorInDiscipline = event => {
         event.preventDefault();
-        console.log("Submit add Professor in discipline");
+        fetch(`${BASE_PATH}${PROFESSOR_PATH}/${store.getState().current_professor_id}${DISCIPLINE_PATH}/${store.getState().current_discipline_id}/attach`, {
+            method: "PUT",
+            headers: {"api-token": localStorage.getItem('token')},
+        }).then(function (response) {
+            if (response.status === 401) {
+                document.location.href = "/";
+            }
+            return response.json()
+        }).then(response => {
+            $(function () {
+                $('#addProfessorInDisciplineModal').modal('toggle');
+            });
+            this.props.reloadListProfessor();
+            console.log("Преподаватель прикреплен к дисциплине", response);
+        })
+            .catch(() => {
+                $('[data-toggle="popover"]').popover();
+                console.log("Преподаватель не прикреплен к дисциплине");
+            });
+    };
+    handleSubmitDeleteProfessorFromDiscipline = event => {
+        event.preventDefault();
+        fetch(`${BASE_PATH}${PROFESSOR_PATH}/${store.getState().current_professor_id}${DISCIPLINE_PATH}/${store.getState().current_discipline_id}/detach`, {
+            method: "PUT",
+            headers: {"api-token": localStorage.getItem('token')},
+        }).then(function (response) {
+            if (response.status === 401) {
+                document.location.href = "/";
+            }
+            return response.json()
+        }).then(response => {
+            $(function () {
+                $('#deleteProfessorFromDisciplineModal').modal('toggle');
+            });
+            this.props.reloadListProfessor();
+            console.log("Преподаватель прикреплен к дисциплине", response);
+        })
+            .catch(() => {
+                $('[data-toggle="popover"]').popover();
+                console.log("Преподаватель не прикреплен к дисциплине");
+            });
     };
 
     render() {
@@ -277,8 +318,9 @@ export class PageProfessorPopup extends Component {
                                         <label htmlFor="addProfessor">Преподаватель</label>
                                         <select className="form-control" id="addProfessor"
                                                 onChange={this.handleChangeSelectProfessor}>
+                                            <option disabled selected>Выберите преподавателя</option>
                                             {Object.values(store.getState().list_professor).map(professor =>
-                                                <option key={professor.id}>
+                                                <option key={professor.id} value={professor.id}>
                                                     {professor.surname} {professor.firstname} {professor.middlename}
                                                 </option>
                                             )}
@@ -288,8 +330,9 @@ export class PageProfessorPopup extends Component {
                                         <label htmlFor="addDiscipline">Дисциплина</label>
                                         <select className="form-control" id="addDiscipline"
                                                 onChange={this.handleChangeSelectDiscipline}>
+                                            <option disabled selected>Выберите дисциплину</option>
                                             {Object.values(store.getState().list_discipline).map(discipline =>
-                                                <option key={discipline.id}>
+                                                <option key={discipline.id} value={discipline.id}>
                                                     {discipline.name}
                                                 </option>
                                             )}
@@ -298,6 +341,56 @@ export class PageProfessorPopup extends Component {
                                 </div>
                                 <div className="modal-footer">
                                     <button type="submit" className="btn btn-outline-primary">Добавить</button>
+                                    <button type="button" className="btn btn-outline-secondary"
+                                            data-dismiss="modal">Отмена
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {/*Попап для удаления преподавателя из дисциплины*/}
+                <div className="modal fade" id="deleteProfessorFromDisciplineModal" tabIndex="-1" role="dialog"
+                     aria-labelledby="deleteProfessorFromDisciplineModal" aria-hidden="true">
+                    <div className="modal-dialog" role="document">
+                        <div className="modal-content">
+                            <form id="deleteProfessorFromDisciplineModal"
+                                  onSubmit={this.handleSubmitDeleteProfessorFromDiscipline}>
+                                <div className="modal-header bg-light">
+                                    <h5 className="modal-title" id="deleteProfessorFromDisciplineModal">Удаление
+                                        преподавателя из дисциплины</h5>
+                                    <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div className="modal-body">
+                                    <div className="form-group">
+                                        <label htmlFor="deleteProfessor">Преподаватель</label>
+                                        <select className="form-control" id="deleteProfessor"
+                                                onChange={this.handleChangeSelectProfessor}>
+                                            <option disabled selected>Выберите преподавателя</option>
+                                            {Object.values(store.getState().list_professor).map(professor =>
+                                                <option key={professor.id} value={professor.id}>
+                                                    {professor.surname} {professor.firstname} {professor.middlename}
+                                                </option>
+                                            )}
+                                        </select>
+                                    </div>
+                                    <div className="form-group">
+                                        <label htmlFor="deleteDiscipline">Дисциплина</label>
+                                        <select className="form-control" id="deleteDiscipline"
+                                                onChange={this.handleChangeSelectDiscipline}>
+                                            <option disabled selected>Выберите дисциплину</option>
+                                            {Object.values(store.getState().list_discipline).map(discipline =>
+                                                <option key={discipline.id} value={discipline.id}>
+                                                    {discipline.name}
+                                                </option>
+                                            )}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div className="modal-footer">
+                                    <button type="submit" className="btn btn-outline-primary">Удалить</button>
                                     <button type="button" className="btn btn-outline-secondary"
                                             data-dismiss="modal">Отмена
                                     </button>

@@ -56,6 +56,12 @@ export const setCurrentProfessorPassword = (password) => ({
     current_professor_password: password
 });
 
+//дисциплины
+export const setCurrentDisciplineId = (id) => ({
+    type: "SET_CURRENT_DISCIPLINE_ID",
+    current_discipline_id: id
+});
+
 //cтуденты
 export const getListStudent = (list_student) => ({
     type: "GET_LIST-STUDENT",

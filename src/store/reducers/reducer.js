@@ -99,6 +99,10 @@ export default (state = initialState, action) => {
             return {
                 ...state, isLoading_listDiscipline: action.isLoading_listDiscipline
             };
+        case "SET_CURRENT_DISCIPLINE_ID":
+            return {
+                ...state, current_discipline_id: action.current_discipline_id
+            };
         default:
             return state;
     }
