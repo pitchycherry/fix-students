@@ -250,8 +250,8 @@ class AddPopup extends Component{
         newStudent.append('middlename', document.getElementById("addStudentMiddlename").value);
         newStudent.append('login', document.getElementById("addStudentLogin").value);
         newStudent.append('plainPassword', document.getElementById("addStudentPassword").value);
-        newStudent.append('deviceUid', document.getElementById("addStudentDeviceUid").value);
-        newStudent.append('groupId', localStorage.getItem('id'));
+        newStudent.append('device_uid', document.getElementById("addStudentDeviceUid").value);
+        newStudent.append('group_id', localStorage.getItem('id'));
         fetch(`${BASE_PATH}${STUDENT_PATH}`, {
             method: "POST",
             headers: {
@@ -387,8 +387,8 @@ class EditPopup extends Component{
         editStudent.append('middlename', document.getElementById("editStudentMiddlename").value);
         editStudent.append('login', document.getElementById("editStudentLogin").value);
         editStudent.append('plainPassword', document.getElementById("editStudentPassword").value);
-        editStudent.append('deviceUid', document.getElementById("editStudentDeviceUid").value);
-        editStudent.append('groupId', localStorage.getItem('id'));
+        editStudent.append('device_uid', document.getElementById("editStudentDeviceUid").value);
+        editStudent.append('group_id', localStorage.getItem('id'));
         let idStudent = ("/" + localStorage.getItem('idSub'));
         fetch(`${BASE_PATH}${STUDENT_PATH}` + idStudent, {
             method: "PUT",
