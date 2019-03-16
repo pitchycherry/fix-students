@@ -483,7 +483,7 @@ class EditPopup extends Component{
                                 </div>
                                 {
                                     (itemGroup.length) ?
-                                        <select className="form-control selectpicker btn-outline-primary " onClick={this.selectGroupStudent}>
+                                        <select className="form-control" onClick={this.selectGroupStudent}>
                                             {itemGroup}
                                         </select>
                                         :
