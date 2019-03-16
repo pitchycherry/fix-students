@@ -12,6 +12,7 @@ import {
     setCurrentProfessorPassword,
     setCurrentProfessorSurname
 } from "../store/actions/actions";
+import {PageProfessorPopup} from "./PageProfessorPopup";
 
 export class ListProfessor extends Component {
     handleSelectProfessor = (event, id, firstname, surname, middlename, login, password) => {
@@ -23,24 +24,33 @@ export class ListProfessor extends Component {
         store.dispatch(setCurrentProfessorLogin(login));
         store.dispatch(setCurrentProfessorPassword(password));
     };
-    loadListDiscipline = () =>{
-        fetch('http://nstu-tracker.thematrix.su/discipline',{
+    loadListDiscipline = () => {
+        fetch('http://nstu-tracker.thematrix.su/discipline', {
             method: "GET",
-            headers:{"api-token": localStorage.getItem('token')}
+            headers: {"api-token": localStorage.getItem('token')}
         }).then(function (response) {
+            if(response.status === 401) {
+                document.location.href = "/";
+            }
             return response.json()
-        }).then(data =>{
+        }).then(data => {
             store.dispatch(getListDiscipline(data));
             console.log("Список дисциплин получен", data);
-        }).catch(function(error) {
+        }).catch(function (error) {
             console.log('GET findAll failed', error.message)
         });
     };
-    componentDidMount() {
+
+    loadListProfessor() {
         fetch(`${BASE_PATH}${PROFESSOR_PATH}`, {
             method: "GET",
             headers: {"api-token": localStorage.getItem('token')}
         }).then(function (response) {
+            console.log(response.status);
+            if(response.status === 401) {
+                document.location.href = "/";
+            }
+
             return response.json()
         }).then(data => {
             store.dispatch(getListProfessor(data));
@@ -50,9 +60,14 @@ export class ListProfessor extends Component {
         });
     }
 
+    componentDidMount() {
+        this.loadListProfessor();
+    }
+
     render() {
         return (
             <div className="container-fluid list-teacher">
+                <PageProfessorPopup reloadListProfessor={this.loadListProfessor}/>
                 <div className="row">
                     <div className="control-teacher col-3">
                         <div className="col text-center">
@@ -62,7 +77,8 @@ export class ListProfessor extends Component {
                                 data-target="#addProfessorModal">Добавить преподавателя
                         </button>
                         <button type="button" className="btn btn-outline-primary btn-block" data-toggle="modal"
-                                data-target="#addProfessorInDisciplineModal" onClick={this.loadListDiscipline}>Добавить преподавателя в дисциплину
+                                data-target="#addProfessorInDisciplineModal" onClick={this.loadListDiscipline}>Добавить
+                            преподавателя в дисциплину
                         </button>
                     </div>
 

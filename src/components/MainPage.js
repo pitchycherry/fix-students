@@ -3,6 +3,7 @@ import "../css/index.css"
 import {BASE_PATH, LOGIN_PATH} from "./App";
 import {store} from "../index";
 import {setLogin, setPassword} from "../store/actions/actions";
+import $ from "jquery";
 
 export class MainPage extends Component {
     handleChangeLogin = event => {
@@ -11,6 +12,13 @@ export class MainPage extends Component {
     handleChangePassword = event => {
         store.dispatch(setPassword(event.target.value));
     };
+
+    componentWillMount() {
+        if (localStorage.getItem('token') !== "" || typeof (localStorage.getItem('token')) !== 'undefined') {
+            //this.props.history.push('/groups');
+        }
+    }
+
     handleSubmit = event => {
         event.preventDefault();
         const userData = new FormData();
@@ -22,6 +30,9 @@ export class MainPage extends Component {
             headers: {"api-token": localStorage.getItem('token')},
             body: userData
         }).then(function (response) {
+            if (response.status === 400) {
+                $('[data-toggle="popover"]').popover();
+            }
             return response.json()
         }).then(response => {
             localStorage.setItem('token', response.data.token);
@@ -52,7 +63,10 @@ export class MainPage extends Component {
                                        onChange={this.handleChangePassword}/>
                             </div>
                             <div className="text-center">
-                                <button type="submit" className="btn btn-outline-primary">Войти</button>
+                                <button type="submit" className="kok btn btn-outline-primary" data-toggle='popover'
+                                        title="Ошибка входа"
+                                        data-content="Неверный логин или пароль">Войти
+                                </button>
                             </div>
                         </form>
                     </div>

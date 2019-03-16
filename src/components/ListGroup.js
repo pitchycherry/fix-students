@@ -3,18 +3,17 @@ import 'font-awesome/css/font-awesome.min.css';
 import {BASE_PATH, GROUP_PATH} from "./App";
 import {store} from "../index";
 import {getListGroup, setCurrentGroup} from "../store/actions/actions";
+import {PageGroupPopup} from "./PageGroupPopup";
 
 export class ListGroup extends Component {
-    handleSelectGroup = (event, id, name) => {
-        event.preventDefault();
-        store.dispatch(setCurrentGroup(id, name));
-    };
-
-    componentDidMount() {
+    loadListGroup() {
         fetch(`${BASE_PATH}${GROUP_PATH}`, {
             method: "GET",
             headers: {"api-token": localStorage.getItem('token')}
         }).then(function (response) {
+            if(response.status === 401) {
+                document.location.href = "/";
+            }
             return response.json()
         }).then(data => {
             store.dispatch(getListGroup(data));
@@ -24,6 +23,15 @@ export class ListGroup extends Component {
         });
     }
 
+    handleSelectGroup = (event, id, name) => {
+        event.preventDefault();
+        store.dispatch(setCurrentGroup(id, name));
+    };
+
+    componentDidMount() {
+        this.loadListGroup();
+    }
+
     render() {
         /*Вычисления ниже ипользуются для определения последей цифры года для распределения групп по курсам*/
         const numYear = (new Date().getFullYear()).toString()[3] === "0" ? 10 : (new Date().getFullYear()).toString()[3];
@@ -31,6 +39,7 @@ export class ListGroup extends Component {
 
         return (
             <Fragment>
+                <PageGroupPopup reloadListGroup={this.loadListGroup}/>
                 <div className="container-fluid">
                     <div className="title-group">
                         <div className="row">

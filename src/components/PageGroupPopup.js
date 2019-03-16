@@ -18,15 +18,20 @@ export class PageGroupPopup extends Component {
             headers: {"api-token": localStorage.getItem('token')},
             body: current_group
         }).then(function (response) {
+
+            if (response.status === 401) {
+                document.location.href = "/";
+            }
             return response.json()
         }).then(response => {
             $(function () {
                 $('#addGroupModal').modal('toggle');
             });
-            document.location.reload(true);
+            this.props.reloadListGroup();
             console.log("Новая группа добавлена", response);
         })
             .catch(() => {
+                $('[data-toggle="popover"]').popover();
                 console.log("Новая группа не добавлена");
             });
     };
@@ -37,12 +42,15 @@ export class PageGroupPopup extends Component {
             method: "DELETE",
             headers: {"api-token": localStorage.getItem('token')},
         }).then(function (response) {
+            if (response.status === 401) {
+                document.location.href = "/";
+            }
             return response.json()
         }).then(response => {
             $(function () {
                 $('#deleteGroupModal').modal('toggle');
             });
-            document.location.reload(true);
+            this.props.reloadListGroup();
             console.log("Группа удалена", response);
         })
             .catch(() => {
@@ -59,15 +67,19 @@ export class PageGroupPopup extends Component {
             headers: {"api-token": localStorage.getItem('token')},
             body: new URLSearchParams(editGroup)
         }).then(function (response) {
+            if (response.status === 401) {
+                document.location.href = "/";
+            }
             return response.json()
         }).then(response => {
             $(function () {
                 $('#editGroupModal').modal('toggle');
             });
-            document.location.reload(true);
+            this.props.reloadListGroup();
             console.log("Группа изменена", response);
         })
             .catch(() => {
+                $('[data-toggle="popover"]').popover();
                 console.log("Группа не изменена");
             });
     };
@@ -92,11 +104,12 @@ export class PageGroupPopup extends Component {
                                         <label htmlFor="addGroupName">Название группы</label>
                                         <input className="form-control" type="text" name="name" id="addGroupName"
                                                placeholder="Введите название группы" pattern="[A-Za-zА-Яа-яЁё]+-[0-9]+"
-                                               onChange={this.handleChangeGroup}/>
+                                               onChange={this.handleChangeGroup} required="required"/>
                                     </div>
                                 </div>
                                 <div className="modal-footer">
-                                    <button type="submit" className="btn btn-outline-primary">Добавить
+                                    <button type="submit" className="btn btn-outline-primary" data-toggle='popover'
+                                            title="Такая группа уже существует">Добавить
                                     </button>
                                     {console.log(store.getState())}
                                     <button type="button" className="btn btn-outline-secondary"
@@ -143,11 +156,13 @@ export class PageGroupPopup extends Component {
                                         <label htmlFor="editGroupName">Новое название группы</label>
                                         <input className="form-control" type="text" name="value" id="editGroupName"
                                                placeholder="Введите название группы" pattern="[A-Za-zА-Яа-яЁё]+-[0-9]+"
-                                               onChange={this.handleChangeGroup}/>
+                                               onChange={this.handleChangeGroup} required="required"/>
                                     </div>
                                 </div>
                                 <div className="modal-footer">
-                                    <button type="submit" className="btn btn-outline-primary">Изменить</button>
+                                    <button type="submit" className="btn btn-outline-primary" data-toggle='popover'
+                                            title="Такая группа уже существует">Изменить
+                                    </button>
                                     <button type="button" className="btn btn-outline-secondary"
                                             data-dismiss="modal">Отмена
                                     </button>

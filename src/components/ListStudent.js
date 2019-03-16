@@ -11,6 +11,9 @@ export class ListStudent extends Component {
             method: "GET",
             headers:{"api-token": localStorage.getItem('token')}
         }).then(function (response) {
+            if(response.status === 401) {
+                document.location.href = "/";
+            }
             return response.json()
         }).then(data =>{
             store.dispatch(getListStudent(data));
@@ -132,6 +135,9 @@ class ButtonGroupVertical extends Component{
             method: "GET",
             headers: {"api-token": localStorage.getItem('token')}
         }).then(function (response) {
+            if(response.status === 401) {
+                document.location.href = "/";
+            }
             return response.json()
         }).then(data => {
             store.dispatch(getListGroup(data));
@@ -146,6 +152,9 @@ class ButtonGroupVertical extends Component{
             method: "GET",
             headers: {"api-token": localStorage.getItem('token')}
         }).then(function (response) {
+            if(response.status === 401) {
+                document.location.href = "/";
+            }
             return response.json()
         }).then(data => {
             store.dispatch(getListGroup(data));
@@ -250,6 +259,9 @@ class AddPopup extends Component{
             },
             body: newStudent
         }).then(function (response) {
+            if(response.status === 401) {
+                document.location.href = "/";
+            }
             return response.json()
         }).then(data => {
             $('#addStudentModal').modal('toggle');
@@ -385,6 +397,9 @@ class EditPopup extends Component{
             },
             body: new URLSearchParams(editStudent)
         }).then(function (response) {
+            if(response.status === 401) {
+                document.location.href = "/";
+            }
             return response.json()
         }).then(data => {
             $('#editStudentModal').modal('toggle');
@@ -514,6 +529,9 @@ class DeletePopup extends Component{
                 "api-token": localStorage.getItem('token'),
             },
         }).then(function (response) {
+            if(response.status === 401) {
+                document.location.href = "/";
+            }
             return response.json()
         }).then(data => {
             $('#deleteStudentModal').modal('toggle');
