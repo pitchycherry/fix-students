@@ -56,11 +56,13 @@ export class ListDiscipline extends Component {
                 <DeletePopup reloadListDiscipline = {this.loadListDiscipline}/>
                 <div className="container-fluid ">
                     <div className="row justify-content-center">
+                        <div className="control-teacher col-2">
+                            <button type="button" className="col-mx btn btn-outline-primary btn-block" data-toggle="modal"
+                                    data-target="#addDisciplineModal">Добавить дисциплину
+                            </button>
+                        </div>
                         <div className="list-teacher__body col-6 ">
                             <div className="col text-center">
-                                <button type="button" className="fixedbutton col-3 btn btn-outline-primary btn-block" data-toggle="modal"
-                                        data-target="#addDisciplineModal">Добавить дисциплину
-                                </button>
                                 <p className="classic-title">Список дисциплин</p>
                             </div>
                             <ul className="list-group list-group-flush">
@@ -190,6 +192,10 @@ class EditPopup extends Component{
         localStorage.setItem('id', '');
         document.getElementById("editDisciplineNameLabel").value = '';
     };
+    close = () =>{
+        localStorage.setItem('id', '');
+        document.getElementById("editDisciplineNameLabel").value = '';
+    };
     render(){
         return(
             <div className="modal fade" id="editDisciplineModal" tabIndex="-1" role="dialog"
@@ -212,7 +218,7 @@ class EditPopup extends Component{
                             </div>
                             <div className="modal-footer">
                                 <button type="submit" className="btn btn-outline-primary" >Применить</button>
-                                <button type="button" className="btn btn-outline-secondary" data-dismiss="modal">Отмена</button>
+                                <button type="button" className="btn btn-outline-secondary" data-dismiss="modal" onClick={this.close}>Отмена</button>
                             </div>
                         </form>
                     </div>
