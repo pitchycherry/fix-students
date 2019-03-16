@@ -5,12 +5,13 @@ const initialState = {
 
     //для дисциплин
     list_discipline:[],
-    isLoading_discipline:false,
+    isLoading_listDiscipline:true,
 
     //для студентов
     list_student: [],
     isLoading_listStudent: true,
     isLoading_listGroup: true,
+    select_group: -1,
 };
 export default (state = initialState, action) => {
     switch (action.type) {
@@ -82,6 +83,10 @@ export default (state = initialState, action) => {
             return {
                 ...state, isLoading_listGroup: action.isLoading_listGroup
             };
+        case "SET_SELECT_GROUP":
+            return {
+                ...state, select_group: action.select_group
+            };
 
         // для дисциплин
         case "GET_LIST_DISCIPLINE":
@@ -89,6 +94,10 @@ export default (state = initialState, action) => {
                 ...state, list_discipline: action.list_discipline.data.map(discipline => {
                     return discipline;
                 })
+            };
+        case "SET_ISLOADING_LISTDISCIPLINE":
+            return {
+                ...state, isLoading_listDiscipline: action.isLoading_listDiscipline
             };
         default:
             return state;

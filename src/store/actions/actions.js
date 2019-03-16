@@ -14,10 +14,16 @@ export const getListProfessor = (list_professor) => ({
     type: "GET_LIST-PROFESSOR",
     list_professor: list_professor
 });
+
 export const getListDiscipline = (list_discipline) => ({
     type: "GET_LIST_DISCIPLINE",
     list_discipline: list_discipline
 });
+export const setIsLoadinglistDiscipline = (state) => ({
+    type: "SET_ISLOADING_LISTDISCIPLINE",
+    isLoading_listDiscipline: state
+});
+
 export const setCurrentGroup = (id, name) => ({
     type: "SET_CURRENT_GROUP",
     current_group: {
@@ -62,4 +68,8 @@ export const setIsLoadinglistStudent = (state) => ({
 export const setIsLoadinglistGroup = (state) => ({
     type: "SET_ISLOADING_LISTSGROUP",
     isLoading_listGroup: state
+});
+export const setSelectGroup = (num) => ({
+    type: "SET_SELECT_GROUP",
+    select_group: num
 });
