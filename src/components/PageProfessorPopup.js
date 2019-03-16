@@ -1,10 +1,11 @@
 import React, {Component, Fragment} from 'react';
 import {store} from "../index";
 import {
-    setCurrentProfessorFirstname, setCurrentProfessorLogin,
+    setCurrentDisciplineId,
+    setCurrentProfessorFirstname, setCurrentProfessorId, setCurrentProfessorLogin,
     setCurrentProfessorMiddlename, setCurrentProfessorPassword, setCurrentProfessorSurname
 } from "../store/actions/actions";
-import {BASE_PATH, PROFESSOR_PATH} from "./App";
+import {BASE_PATH, DISCIPLINE_PATH, PROFESSOR_PATH} from "./App";
 import $ from "jquery";
 
 export class PageProfessorPopup extends Component {
@@ -36,7 +37,7 @@ export class PageProfessorPopup extends Component {
             headers: {"api-token": localStorage.getItem('token')},
             body: current_professor
         }).then(function (response) {
-            if(response.status === 401) {
+            if (response.status === 401) {
                 document.location.href = "/";
             }
             return response.json()
@@ -60,7 +61,7 @@ export class PageProfessorPopup extends Component {
             method: "DELETE",
             headers: {"api-token": localStorage.getItem('token')},
         }).then(function (response) {
-            if(response.status === 401) {
+            if (response.status === 401) {
                 document.location.href = "/";
             }
             return response.json()
@@ -88,7 +89,7 @@ export class PageProfessorPopup extends Component {
             headers: {"api-token": localStorage.getItem('token')},
             body: new URLSearchParams(editProfessor)
         }).then(function (response) {
-            if(response.status === 401) {
+            if (response.status === 401) {
                 document.location.href = "/";
             }
             return response.json()
@@ -106,15 +107,32 @@ export class PageProfessorPopup extends Component {
     };
     handleChangeSelectProfessor = event => {
         event.preventDefault();
-        console.log(event.target.value);
+        store.dispatch(setCurrentProfessorId(event.target.options[event.target.selectedIndex].value));
     };
     handleChangeSelectDiscipline = event => {
         event.preventDefault();
-        console.log(event.target.value);
+        store.dispatch(setCurrentDisciplineId(event.target.options[event.target.selectedIndex].value));
     };
     handleSubmitAddProfessorInDiscipline = event => {
         event.preventDefault();
-        console.log("Submit add Professor in discipline");
+        fetch(`${BASE_PATH}${PROFESSOR_PATH}/${store.getState().current_professor_id}${DISCIPLINE_PATH}/${store.getState().current_discipline_id}/attach`, {
+            method: "PUT",
+            headers: {"api-token": localStorage.getItem('token')},
+        }).then(function (response) {
+            if (response.status === 401) {
+                document.location.href = "/";
+            }
+            return response.json()
+        }).then(response => {
+            $(function () {
+                $('#addProfessorInDisciplineModal').modal('toggle');
+            });
+            console.log("Преподаватель прикреплен к дисциплине", response);
+        })
+            .catch(() => {
+                $('[data-toggle="popover"]').popover();
+                console.log("Преподаватель не прикреплен к дисциплине");
+            });
     };
 
     render() {
@@ -278,7 +296,7 @@ export class PageProfessorPopup extends Component {
                                         <select className="form-control" id="addProfessor"
                                                 onChange={this.handleChangeSelectProfessor}>
                                             {Object.values(store.getState().list_professor).map(professor =>
-                                                <option key={professor.id}>
+                                                <option key={professor.id} value={professor.id}>
                                                     {professor.surname} {professor.firstname} {professor.middlename}
                                                 </option>
                                             )}
@@ -289,7 +307,7 @@ export class PageProfessorPopup extends Component {
                                         <select className="form-control" id="addDiscipline"
                                                 onChange={this.handleChangeSelectDiscipline}>
                                             {Object.values(store.getState().list_discipline).map(discipline =>
-                                                <option key={discipline.id}>
+                                                <option key={discipline.id} value={discipline.id}>
                                                     {discipline.name}
                                                 </option>
                                             )}
